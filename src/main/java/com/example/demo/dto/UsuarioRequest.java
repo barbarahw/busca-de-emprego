@@ -25,8 +25,13 @@ public class UsuarioRequest {
 
     @Pattern(regexp = "^[0-9]{10,14}$", message = "invalid_format")
     private String phone;
+    
+    @Pattern (regexp = "^[a-zA-Z0-9_]{10,600}$")
+    private String experience;
+    
+    @Pattern (regexp = "^[a-zA-Z0-9_]{10,600}$")
+    private String education;
 
-    // Getters e setters
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
@@ -41,4 +46,10 @@ public class UsuarioRequest {
 
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
+    
+    public String getExperience() {return experience;}
+    public void setExperience(String experience) {this.experience = experience;}
+    
+    public String getEducation() {return experience;}
+    public void setEducation(String experience) {this.education = education;}
 }

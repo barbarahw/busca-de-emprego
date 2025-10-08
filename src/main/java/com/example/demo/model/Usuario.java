@@ -9,28 +9,54 @@ import jakarta.validation.constraints.*;
 
 @Entity
 @Table(name = "usuarios", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"username"}),
-        @UniqueConstraint(columnNames = {"name"})
+    @UniqueConstraint(columnNames = {"username"}),
+    @UniqueConstraint(columnNames = {"name"})
 })
 public class Usuario {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Column(nullable = false, length = 150, unique = true)
     private String name;
-    
+
     @Column(nullable = false, length = 20, unique = true)
     private String username;
-    
+
     @Column(nullable = false, length = 20)
     private String password;
-    
+
     @Column
     private String email;
-    
+
     @Column(length = 14)
     private String phone;
+
+    @Column(length = 600)
+    private String experience;
+    
+    @Column (length = 600)
+    private String education;
+    
+    @Column 
+    private String token;
+
+    public String getExperience() {
+        return experience;
+    }
+
+    public void setExperience(String experience) {
+        this.experience = experience;
+    }
+
+    public String getEducation() {
+        return education;
+    }
+
+    public void setEducation(String education) {
+        this.education = education;
+    }
 
     public Long getId() {
         return id;
@@ -79,7 +105,5 @@ public class Usuario {
     public void setPhone(String phone) {
         this.phone = phone;
     }
-    
-    
-    
+
 }

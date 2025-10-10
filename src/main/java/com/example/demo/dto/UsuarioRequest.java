@@ -50,6 +50,6 @@ public class UsuarioRequest {
     public String getExperience() {return experience;}
     public void setExperience(String experience) {this.experience = experience;}
     
-    public String getEducation() {return experience;}
-    public void setEducation(String experience) {this.education = education;}
+    public String getEducation() {return education;}
+    public void setEducation(String education) {this.education = education;}
 }

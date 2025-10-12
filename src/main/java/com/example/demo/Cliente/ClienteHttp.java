@@ -25,20 +25,41 @@ public class ClienteHttp {
         return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
     
-    public HttpResponse<String> lerUsuario (String token) throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(baseUrl + "/users"))
-                .header("Authorization", "Bearer" + token)
-                .GET()
-                .build();
-        return client.send(request, HttpResponse.BodyHandlers.ofString());
-    }
-    
     public HttpResponse<String> fazerLogin (String loginJson) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseUrl + "/login"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(loginJson))
+                .build();
+        
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+    
+    public HttpResponse<String> lerUsuario(String token, String userId) throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl + "/users" + userId))
+                .header("Authorization", "Bearer" + token)
+                .GET()
+                .build();
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    HttpResponse<String> editarUsuario(String token, String json, String userId) throws Exception{
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl + "/users" + userId))
+                .header("Authorization", "Bearer" + token)
+                .header("Content-Type", "application/json")
+                .method("PATCH", HttpRequest.BodyPublishers.ofString(json))
+                .build();
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    HttpResponse<String> excluirUsuario(String token, String userId) throws Exception{
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl + "/users" + userId))
+                .header("Authorization", "Bearer" + token)
+                .header("Content-Type", "application/json")
+                .DELETE()
                 .build();
         
         return client.send(request, HttpResponse.BodyHandlers.ofString());

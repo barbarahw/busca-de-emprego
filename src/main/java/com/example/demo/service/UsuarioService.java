@@ -22,14 +22,13 @@ public class UsuarioService {
         this.repositorio = repo;
     }
 
-    // ✅ Cadastrar novo usuário
     public Usuario cadastrar(UsuarioRequest dto) {
         if (repositorio.findByUsername(dto.getUsername()).isPresent()) {
             throw new RuntimeException("Username já existe");
         }
 
         Usuario u = new Usuario();
-        u.setName(dto.getName().toUpperCase()); // conforme o protocolo, nome salvo em maiúsculo
+        u.setName(dto.getName().toUpperCase());
         u.setUsername(dto.getUsername());
         u.setPassword(dto.getPassword());
         u.setEmail(dto.getEmail());
@@ -40,7 +39,6 @@ public class UsuarioService {
         return repositorio.save(u);
     }
 
-    // ✅ Login com geração do token
     public String login(String username, String password) {
         Optional<Usuario> usuarioOpt = repositorio.findByUsername(username);
 
@@ -48,9 +46,9 @@ public class UsuarioService {
             Usuario usuario = usuarioOpt.get();
 
             if (usuario.getPassword().equals(password)) {
-                // Gera token com ID como "subject"
+
                 return jwtUtil.gerarToken(
-                        String.valueOf(usuario.getId()), 
+                        String.valueOf(usuario.getId()),
                         usuario.getUsername(),
                         "user"
                 );
@@ -61,13 +59,29 @@ public class UsuarioService {
             throw new RuntimeException("Invalid credentials");
         }
     }
+    
+    public Usuario editarUsuario (Long id, UsuarioRequest dto) {
+        Optional<Usuario> usuarioOpt = repositorio.findById(id);
+        if (usuarioOpt.isEmpty()) {
+            throw new RuntimeException();
+        }
+        
+        Usuario u = usuarioOpt.get();
+        
+        if (dto.getName() != null) u.setName(dto.getName());
+        if (dto.getPassword()!= null) u.setPassword(dto.getPassword());
+        if (dto.getEmail()!= null) u.setEmail(dto.getEmail());
+        if (dto.getPhone()!= null) u.setPhone(dto.getPhone());
+        if (dto.getExperience()!= null) u.setExperience(dto.getExperience());
+        if (dto.getEducation()!= null) u.setEducation(dto.getEducation());
+        
+        return repositorio.save(u);
+    }
 
-    // ✅ Ler usuário por ID (para o GET /users/{id})
     public Usuario buscarPorId(Long id) {
         return repositorio.findById(id).orElse(null);
     }
 
-    // ✅ Extrai o ID do usuário a partir do token JWT
     public Long getUserIdFromToken(String token) {
         try {
             String subject = jwtUtil.extrairSubject(token);
@@ -75,6 +89,10 @@ public class UsuarioService {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public boolean validarToken(String token) {
+        return jwtUtil.validarToken(token);
     }
 
     public int getExpiration() {

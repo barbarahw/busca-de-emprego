@@ -171,10 +171,7 @@ public class ClienteApp {
                     int end = responseBody.indexOf("\"", start);
                     token = responseBody.substring(start, end);
                     UsernameLogado = username;
-                    
-                    //TO DO: MUDAR O ID PARA O ID DO BANCO
-                    userId = username;
-                    
+
                     System.out.println("Login realizado com sucesso");
                 }
 
@@ -212,51 +209,17 @@ public class ClienteApp {
         System.out.println("Formação: ");
         String education = sc.nextLine();
 
-        StringBuilder jsonBuilder = new StringBuilder();
-        jsonBuilder.append("{");
-
-        boolean firstField = true;
-
-        if (!name.isEmpty()) {
-            jsonBuilder.append(String.format("\n \"name\": \"%s\"", name));
-            firstField = false;
-        }
-
-        if (!email.isEmpty()) {
-            if (!firstField) {
-                jsonBuilder.append(",");
-            }
-            jsonBuilder.append(String.format("\n \"email\": \"%s\"", email));
-            firstField = false;
-        }
-
-        if (!phone.isEmpty()) {
-            if (!firstField) {
-                jsonBuilder.append(",");
-            }
-            jsonBuilder.append(String.format("\n \"phone\": \"%s\"", phone));
-            firstField = false;
-        }
-
-        if (!experience.isEmpty()) {
-            if (!firstField) {
-                jsonBuilder.append(",");
-            }
-            jsonBuilder.append(String.format("\n \"experience\": \"%s\"", experience));
-            firstField = false;
-        }
-
-        if (!education.isEmpty()) {
-            if (!firstField) {
-                jsonBuilder.append(",");
-            }
-            jsonBuilder.append(String.format("\n \"education\": \"%s\"", education));
-            firstField = false;
-        }
-
-        jsonBuilder.append("\n}");
-
-        String json = jsonBuilder.toString();
+        String json = String.format(
+                "{\n"
+                + "  \"name\": \"%s\",\n"
+                + "  \"email\": \"%s\",\n"
+                + "  \"password\": \"%s\",\n"
+                + "  \"phone\": \"%s\",\n"
+                + "  \"experience\": \"%s\",\n"
+                + "  \"education\": \"%s\"\n"
+                + "}",
+                name, email, senha, phone, experience, education
+        );
 
         try {
             HttpResponse<String> response = clienteHttp.editarUsuario(token, json);
@@ -278,8 +241,8 @@ public class ClienteApp {
                 HttpResponse<String> response = clienteHttp.excluirUsuario(token);
                 System.out.println("Status: " + response.statusCode());
                 System.out.println("JSON recebido: " + response.body());
-                
-                if (response.statusCode() == 200){
+
+                if (response.statusCode() == 200) {
                     FazerLogout();
                     System.out.println("Conta excluída com sucesso!");
                 }

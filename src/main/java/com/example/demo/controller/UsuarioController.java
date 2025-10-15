@@ -121,35 +121,35 @@ public class UsuarioController {
         }
     }
 
-    @PostMapping("/users/{id}")
+    @GetMapping("/users/{id}")
     public ResponseEntity<?> lerDados(
-            @PathVariable Long id, 
-            @RequestHeader(value = "Authorization", required = false)String authHeader) {
+            @PathVariable Long id,
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             Map<String, String> resposta = Map.of("message", "Invalid token");
             logJsonEnviado(resposta);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resposta);
         }
-        
+
         String token = authHeader.substring(7);
-        
+
         try {
             Long IdDoToken = service.getUserIdFromToken(token);
-            
+
             if (!IdDoToken.equals(id)) {
                 Map<String, String> resposta = Map.of("message", "Forbidden");
                 logJsonEnviado(resposta);
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(resposta);
             }
-            
+
             Usuario usuario = service.buscarPorId(id);
-            
+
             if (usuario == null) {
                 Map<String, String> resposta = Map.of("message", "User not found");
                 logJsonEnviado(resposta);
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resposta);
             }
-            
+
             Map<String, Object> resposta = new HashMap<>();
             resposta.put("name", usuario.getName());
             resposta.put("username", usuario.getUsername());
@@ -157,7 +157,7 @@ public class UsuarioController {
             resposta.put("phone", usuario.getPhone());
             resposta.put("experience", usuario.getExperience());
             resposta.put("education", usuario.getEducation());
-            
+
             logJsonEnviado(resposta);
             return ResponseEntity.ok(resposta);
         } catch (Exception e) {
@@ -166,6 +166,60 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resposta);
         }
     }
+
+    @PatchMapping("/users/{id}")
+    public ResponseEntity<?> editarUsuario(
+            @PathVariable Long id,
+            @RequestHeader(value = "Authorization", required = false) String authHeader,
+            @RequestBody UsuarioRequest request) {
+        logJsonRecebido(request);
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            ErrorResponse error = new ErrorResponse("Invalid Token");
+            logJsonEnviado(error);
+            return  ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+        }
+        String token = authHeader.substring(7);
+
+        try {
+            if (!service.validarToken(token)) {
+                ErrorResponse error = new ErrorResponse("Invalid token");
+                logJsonEnviado(error);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+            }
+
+            Long userIdToken = service.getUserIdFromToken(token);
+            if (userIdToken != id) {
+                ErrorResponse error = new ErrorResponse("Forbidden");
+                logJsonEnviado(error);
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+            }
+
+            Usuario usuarioAtualizado = service.editarUsuario(id, request);
+
+            logJsonEnviado(usuarioAtualizado);
+            return ResponseEntity.ok(usuarioAtualizado);
+        } catch (RuntimeException e) {
+            if (e.getMessage().equalsIgnoreCase("User not found")) {
+                ErrorResponse error = new ErrorResponse("User not found");
+                logJsonEnviado(error);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+            }
+
+            ErrorResponse error = new ErrorResponse(e.getMessage());
+            logJsonEnviado(error);
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(error);
+
+        } catch (Exception e) {
+
+            ErrorResponse error = new ErrorResponse("Internal server error");
+            logJsonEnviado(error);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
+    }
+
+    
+    
     
     
     private void logJsonRecebido(Object request) {

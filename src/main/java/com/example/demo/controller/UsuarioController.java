@@ -121,6 +121,53 @@ public class UsuarioController {
         }
     }
 
+    @PostMapping("/users/{id}")
+    public ResponseEntity<?> lerDados(
+            @PathVariable Long id, 
+            @RequestHeader(value = "Authorization", required = false)String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            Map<String, String> resposta = Map.of("message", "Invalid token");
+            logJsonEnviado(resposta);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resposta);
+        }
+        
+        String token = authHeader.substring(7);
+        
+        try {
+            Long IdDoToken = service.getUserIdFromToken(token);
+            
+            if (!IdDoToken.equals(id)) {
+                Map<String, String> resposta = Map.of("message", "Forbidden");
+                logJsonEnviado(resposta);
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(resposta);
+            }
+            
+            Usuario usuario = service.buscarPorId(id);
+            
+            if (usuario == null) {
+                Map<String, String> resposta = Map.of("message", "User not found");
+                logJsonEnviado(resposta);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resposta);
+            }
+            
+            Map<String, Object> resposta = new HashMap<>();
+            resposta.put("name", usuario.getName());
+            resposta.put("username", usuario.getUsername());
+            resposta.put("email", usuario.getEmail());
+            resposta.put("phone", usuario.getPhone());
+            resposta.put("experience", usuario.getExperience());
+            resposta.put("education", usuario.getEducation());
+            
+            logJsonEnviado(resposta);
+            return ResponseEntity.ok(resposta);
+        } catch (Exception e) {
+            Map<String, String> resposta = Map.of("message", "Invalid token");
+            logJsonEnviado(resposta);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resposta);
+        }
+    }
+    
+    
     private void logJsonRecebido(Object request) {
         try {
             String jsonRecebido = mapper.writeValueAsString(request);

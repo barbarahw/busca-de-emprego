@@ -187,7 +187,7 @@ public class ClienteApp {
     private static void lerDados(ClienteHttp clienteHttp) {
         System.out.println("\n --- MEUS DADOS ---");
         try {
-            HttpResponse<String> response = clienteHttp.lerUsuario(token, userId);
+            HttpResponse<String> response = clienteHttp.lerUsuario(token);
             System.out.println("Status: " + response.statusCode());
             System.out.println("JSON recebido: " + response.body());
         } catch (Exception e) {
@@ -213,7 +213,7 @@ public class ClienteApp {
         String education = sc.nextLine();
 
         StringBuilder jsonBuilder = new StringBuilder();
-        jsonBuilder.append("{*");
+        jsonBuilder.append("{");
 
         boolean firstField = true;
 
@@ -259,7 +259,7 @@ public class ClienteApp {
         String json = jsonBuilder.toString();
 
         try {
-            HttpResponse<String> response = clienteHttp.editarUsuario(token, json, userId);
+            HttpResponse<String> response = clienteHttp.editarUsuario(token, json);
             System.out.println("Status: " + response.statusCode());
             System.out.println("JSON enviado: " + json);
 
@@ -275,7 +275,7 @@ public class ClienteApp {
 
         if (confirmacao.equalsIgnoreCase("s")) {
             try {
-                HttpResponse<String> response = clienteHttp.excluirUsuario(token, userId);
+                HttpResponse<String> response = clienteHttp.excluirUsuario(token);
                 System.out.println("Status: " + response.statusCode());
                 System.out.println("JSON recebido: " + response.body());
                 

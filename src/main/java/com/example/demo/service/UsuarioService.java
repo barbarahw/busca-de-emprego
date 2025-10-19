@@ -98,4 +98,14 @@ public class UsuarioService {
     public int getExpiration() {
         return jwtUtil.getExpirationInSeconds();
     }
+
+    public boolean deletarUsuario(Long id) {
+        Optional<Usuario> usuarioopt = repositorio.findById(id);
+        if (usuarioopt.isEmpty()){
+            return false;
+        }
+        
+        repositorio.deleteById(id);
+        return true;
+    }
 }

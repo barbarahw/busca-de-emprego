@@ -24,7 +24,12 @@ public class ClienteHttp {
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build();
 
-        return client.send(request, HttpResponse.BodyHandlers.ofString());
+        logRequisicao("POST", request, json);
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        logResposta(response);
+        return response;
     }
 
     public HttpResponse<String> fazerLogin(String loginJson) throws Exception {
@@ -34,7 +39,12 @@ public class ClienteHttp {
                 .POST(HttpRequest.BodyPublishers.ofString(loginJson))
                 .build();
 
-        return client.send(request, HttpResponse.BodyHandlers.ofString());
+        logRequisicao("POST", request, loginJson);
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        logResposta(response);
+        return response;
     }
 
     public HttpResponse<String> lerUsuario(String token) throws Exception {
@@ -44,10 +54,16 @@ public class ClienteHttp {
                 .header("Authorization", "Bearer " + token)
                 .GET()
                 .build();
-        return client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        logRequisicao("GET", request, null);
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        logResposta(response);
+        return response;
     }
 
-    HttpResponse<String> editarUsuario(String token, String json) throws Exception {
+    public HttpResponse<String> editarUsuario(String token, String json) throws Exception {
         String userId = extrairToken(token);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseUrl + "/users/" + userId))
@@ -55,10 +71,16 @@ public class ClienteHttp {
                 .header("Content-Type", "application/json")
                 .method("PATCH", HttpRequest.BodyPublishers.ofString(json))
                 .build();
-        return client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        logRequisicao("PATCH", request, json);
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        logResposta(response);
+        return response;
     }
 
-    HttpResponse<String> excluirUsuario(String token) throws Exception {
+    public HttpResponse<String> excluirUsuario(String token) throws Exception {
         String userId = extrairToken(token);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseUrl + "/users/" + userId))
@@ -67,25 +89,54 @@ public class ClienteHttp {
                 .DELETE()
                 .build();
 
-        return client.send(request, HttpResponse.BodyHandlers.ofString());
+        logRequisicao("DELETE", request, null);
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        logResposta(response);
+        return response;
     }
 
     private String extrairToken(String token) {
         try {
-            token = token.replace("Beares ", "").trim();
-            
+            token = token.replace("Bearer ", "").trim();
+
             String[] partes = token.split("\\.");
             if (partes.length < 2) {
-                throw new IllegalArgumentException("Token JWT invállido");
+                throw new IllegalArgumentException("Token JWT inválido");
             }
-            
+
             String payload = new String(Base64.getUrlDecoder().decode(partes[1]));
             JSONObject json = new JSONObject(payload);
-            
+
             return json.getString("sub");
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("[ERRO] Falha ao extrair ID do token: " + e.getMessage());
             return null;
         }
+    }
+
+    // -------------------------------
+    // 🔍 MÉTODOS DE LOG
+    // -------------------------------
+    private void logRequisicao(String metodo, HttpRequest request, String body) {
+        System.out.println("\n=== [CLIENTE -> SERVIDOR] ===");
+        System.out.println("Método: " + metodo);
+        System.out.println("URL: " + request.uri());
+        System.out.println("Headers enviados: " + request.headers().map());
+        if (body != null && !body.isEmpty()) {
+            System.out.println("JSON enviado: " + body);
+        } else {
+            System.out.println("JSON enviado: (nenhum corpo)");
+        }
+        System.out.println("=============================");
+    }
+
+    private void logResposta(HttpResponse<String> response) {
+        System.out.println("\n=== [SERVIDOR -> CLIENTE] ===");
+        System.out.println("Status: " + response.statusCode());
+        System.out.println("Headers recebidos: " + response.headers().map());
+        System.out.println("JSON recebido: " + response.body());
+        System.out.println("=============================\n");
     }
 }

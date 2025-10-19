@@ -44,9 +44,9 @@ public class JwtUtil {
     
     /*public String pegarId(String token) {
         return parseClaims(token).getSubject();
-    }
+    }*/
     
-    public String pegarRole(String token) {
+    /*public String pegarRole(String token) {
         return (String) parseClaims(token).get("role");
     }*/
 
@@ -75,12 +75,12 @@ public class JwtUtil {
     }
 
     public Claims parseToken(String token) {
-        return Jwts.parser()
+        return Jwts.parserBuilder()
                 .setSigningKey(key)
+                .build()
                 .parseClaimsJws(token)
                 .getBody();
     }
-
     
     public int getExpirationInSeconds() {
         return (int) (expirationMs / 1000);

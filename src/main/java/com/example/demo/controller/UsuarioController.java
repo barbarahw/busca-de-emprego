@@ -26,14 +26,12 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 @RestController
-@RequestMapping
 public class UsuarioController {
 
+    private final UsuarioService service;
+    private final ObjectMapper mapper = new ObjectMapper();
+
     @Autowired
-    private UsuarioService service;
-
-    private ObjectMapper mapper = new ObjectMapper();
-
     public UsuarioController(UsuarioService service) {
         this.service = service;
     }
@@ -70,7 +68,7 @@ public class UsuarioController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<?> cadastrar(@Valid @RequestBody UsuarioRequest request) {
+    public ResponseEntity<?> cadastrar(@RequestBody UsuarioRequest request) {
         logJsonRecebido(request);
 
         try {
@@ -99,7 +97,7 @@ public class UsuarioController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
         try {
 
             String token = service.login(loginRequest.getUsername(), loginRequest.getPassword());
@@ -177,7 +175,7 @@ public class UsuarioController {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             ErrorResponse error = new ErrorResponse("Invalid Token");
             logJsonEnviado(error);
-            return  ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
         }
         String token = authHeader.substring(7);
 
@@ -189,7 +187,7 @@ public class UsuarioController {
             }
 
             Long userIdToken = service.getUserIdFromToken(token);
-            if (userIdToken != id) {
+            if (!userIdToken.equals(id)) {
                 ErrorResponse error = new ErrorResponse("Forbidden");
                 logJsonEnviado(error);
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
@@ -218,10 +216,49 @@ public class UsuarioController {
         }
     }
 
-    
-    
-    
-    
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<?> deletarUsuario(
+            @PathVariable Long id,
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            Map<String, String> resposta = Map.of("message", "invalid token");
+            logJsonEnviado(resposta);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resposta);
+        }
+
+        String token = authHeader.substring(7);
+
+        try {
+            if (!service.validarToken(token)){
+                Map<String, String> resposta = Map.of("message", "Invalid token");
+                logJsonEnviado(resposta);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resposta);
+            }
+            
+            Long userIdToken = service.getUserIdFromToken(token);
+            if (!userIdToken.equals(id)) {
+                Map<String, String> resposta = Map.of("message", "Forbidden");
+                logJsonEnviado(resposta);
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(resposta);
+            }
+            
+            boolean deletado = service.deletarUsuario(id);
+            if (!deletado) {
+                Map<String, String> resposta = Map.of("message", "User not found");
+                logJsonEnviado(resposta);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resposta);
+            }
+            
+            Map<String, String> resposta = Map.of("message", "User deletedd successfully");
+            logJsonEnviado(resposta);
+            return ResponseEntity.ok(resposta);
+        } catch (Exception e) {
+            Map<String, String> resposta = Map.of("message", "Internal server error");
+            logJsonEnviado(resposta);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(resposta);
+        }
+    }
+
     private void logJsonRecebido(Object request) {
         try {
             String jsonRecebido = mapper.writeValueAsString(request);
@@ -230,4 +267,10 @@ public class UsuarioController {
             System.out.println("Erro ao logar JSON recebido: " + e.getMessage());
         }
     }
+
+    @GetMapping("/health")
+    public ResponseEntity<String> healthCheck() {
+        return ResponseEntity.ok("Server is running");
+    }
+
 }

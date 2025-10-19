@@ -136,10 +136,6 @@ public class ClienteApp {
         try {
             HttpResponse<String> response = clienteHttp.cadastrarUsuario(json);
 
-            System.out.println("JSON enviado: " + json);
-            System.out.println("Status: " + response.statusCode());
-            System.out.println("JSON recebido: " + response.body());
-
         } catch (Exception e) {
             System.out.println("Erro ao conectar: " + e.getMessage());
         }
@@ -160,9 +156,6 @@ public class ClienteApp {
 
         try {
             HttpResponse<String> response = clienteHttp.fazerLogin(loginJson);
-            System.out.println("JSON enviado: " + loginJson);
-            System.out.println("Status: " + response.statusCode());
-            System.out.println("JSON recebido: " + response.body());
 
             if (response.statusCode() == 200) {
                 String responseBody = response.body();
@@ -185,8 +178,9 @@ public class ClienteApp {
         System.out.println("\n --- MEUS DADOS ---");
         try {
             HttpResponse<String> response = clienteHttp.lerUsuario(token);
-            System.out.println("Status: " + response.statusCode());
-            System.out.println("JSON recebido: " + response.body());
+    
+            
+            //TODO: ADICIONAR DADOS
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -223,8 +217,6 @@ public class ClienteApp {
 
         try {
             HttpResponse<String> response = clienteHttp.editarUsuario(token, json);
-            System.out.println("Status: " + response.statusCode());
-            System.out.println("JSON enviado: " + json);
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -239,8 +231,6 @@ public class ClienteApp {
         if (confirmacao.equalsIgnoreCase("s")) {
             try {
                 HttpResponse<String> response = clienteHttp.excluirUsuario(token);
-                System.out.println("Status: " + response.statusCode());
-                System.out.println("JSON recebido: " + response.body());
 
                 if (response.statusCode() == 200) {
                     FazerLogout();

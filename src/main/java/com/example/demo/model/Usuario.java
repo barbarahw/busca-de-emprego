@@ -9,8 +9,7 @@ import jakarta.validation.constraints.*;
 
 @Entity
 @Table(name = "usuarios", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"username"}),
-    @UniqueConstraint(columnNames = {"name"})
+    @UniqueConstraint(columnNames = {"username"})
 })
 public class Usuario {
 

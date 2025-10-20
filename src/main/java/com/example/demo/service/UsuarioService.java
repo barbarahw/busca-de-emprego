@@ -110,11 +110,7 @@ public class UsuarioService {
     }
     
     public void logout(String token) {
-        // Se você estiver guardando tokens ativos em memória, aqui é onde remove.
-        // Exemplo (caso use lista de tokens válidos):
-        // tokensAtivos.remove(token);
-
-        // Se quiser apenas não fazer nada (JWT stateless), pode deixar vazio:
+        //TODO: REMOVER TOKEN INATIVO DA LISTA
     }
 
 }

@@ -68,7 +68,7 @@ public class UsuarioController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<?> cadastrar(@RequestBody UsuarioRequest request) {
+    public ResponseEntity<?> cadastrar(@Valid @RequestBody UsuarioRequest request) {
         logJsonRecebido(request);
 
         try {
@@ -123,8 +123,6 @@ public class UsuarioController {
     public ResponseEntity<?> lerDados(
             @PathVariable Long id,
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
-        //TODO - ADICIONAR A REQUEST
-        //logJsonRecebido(/*cade a request*/);
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             Map<String, String> resposta = Map.of("message", "Invalid token");
             logJsonEnviado(resposta);

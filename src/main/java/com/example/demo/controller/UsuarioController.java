@@ -99,7 +99,7 @@ public class UsuarioController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
         try {
-
+            logJsonRecebido(loginRequest);
             String token = service.login(loginRequest.getUsername(), loginRequest.getPassword());
             int expiresIn = service.getExpiration();
 
@@ -123,6 +123,8 @@ public class UsuarioController {
     public ResponseEntity<?> lerDados(
             @PathVariable Long id,
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
+        //TODO - ADICIONAR A REQUEST
+        //logJsonRecebido(/*cade a request*/);
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             Map<String, String> resposta = Map.of("message", "Invalid token");
             logJsonEnviado(resposta);
@@ -258,6 +260,40 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(resposta);
         }
     }
+    
+    
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            Map<String, String> resposta = Map.of("message", "Invalid Token");
+            logJsonEnviado(resposta);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resposta);
+        }
+
+        String token = authHeader.substring(7);
+
+        try {
+            if (!service.validarToken(token)) {
+                Map<String, String> resposta = Map.of("message", "Invalid Token");
+                logJsonEnviado(resposta);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resposta);
+            }
+
+            service.logout(token);
+
+            Map<String, String> resposta = Map.of("message", "OK");
+            logJsonEnviado(resposta);
+            return ResponseEntity.ok(resposta);
+
+        } catch (Exception e) {
+            Map<String, String> resposta = Map.of("message", "Internal server error");
+            logJsonEnviado(resposta);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(resposta);
+        }
+    }
+
 
     private void logJsonRecebido(Object request) {
         try {

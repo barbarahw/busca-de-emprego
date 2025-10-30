@@ -8,6 +8,7 @@ import com.example.demo.repositories.EmpresaRepository;
 import com.example.demo.dto.EmpresaRequest;
 import com.example.demo.model.Empresa;
 import com.example.demo.security.JwtUtil;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,5 +44,30 @@ public class EmpresaService {
         
         return repositorio.save(e);
         
+    }
+    
+    public String login(String username, String password) {
+        Optional<Empresa> empresaOpt = repositorio.findByUsername(username);
+
+        if (empresaOpt.isPresent()) {
+            Empresa empresa = empresaOpt.get();
+
+            if (empresa.getPassword().equals(password)) {
+
+                return jwtUtil.gerarToken(
+                        String.valueOf(empresa.getId()),
+                        empresa.getUsername(),
+                        "user"
+                );
+            } else {
+                throw new RuntimeException("Invalid credentials");
+            }
+        } else {
+            throw new RuntimeException("Invalid credentials");
+        }
+    }
+    
+    public int getExpiration() {
+        return jwtUtil.getExpirationInSeconds();
     }
 }

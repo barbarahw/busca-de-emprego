@@ -10,7 +10,6 @@ import jakarta.persistence.*;
 @Table(name = "empresas", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"id"})
 })
-
 public class Empresa {
     
     @Id

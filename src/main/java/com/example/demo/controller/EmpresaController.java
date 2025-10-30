@@ -6,6 +6,9 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Empresa;
 import com.example.demo.dto.EmpresaRequest;
+import com.example.demo.dto.ErrorResponse;
+import com.example.demo.dto.LoginRequest;
+import com.example.demo.dto.LoginResponse;
 import com.example.demo.service.EmpresaService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
@@ -99,4 +102,29 @@ public class EmpresaController {
             }
         }
     }
+    
+    /*@PostMapping("/login")
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
+        try {
+            logJsonRecebido(loginRequest);
+            String token = empresaService.login(loginRequest.getUsername(), loginRequest.getPassword());
+            int expiresIn = empresaService.getExpiration();
+
+            LoginResponse resposta = new LoginResponse(token, expiresIn);
+            logJsonEnviado(resposta);
+            return ResponseEntity.ok(resposta);
+
+        } catch (RuntimeException e) {
+            ErrorResponse error = new ErrorResponse("Invalid credentials");
+            logJsonEnviado(error);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+
+        } catch (Exception e) {
+            ErrorResponse error = new ErrorResponse("Erro interno do servidor");
+            logJsonEnviado(error);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
+    }*/
+    
+    
 }

@@ -107,4 +107,14 @@ public class EmpresaService {
     public int getExpiration() {
         return jwtUtil.getExpirationInSeconds();
     }
+
+    public boolean deletarEmpresa(Long id) {
+        Optional<Empresa> empresaOpt = repositorio.findById(id);
+        if (empresaOpt.isEmpty()) {
+            return false;
+        }
+
+        repositorio.deleteById(id);
+        return true;
+    }
 }

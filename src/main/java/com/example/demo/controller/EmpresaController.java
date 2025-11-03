@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -156,21 +157,21 @@ public class EmpresaController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resposta);
         }
     }
-    
+
     @PatchMapping("/companies/{id}")
     public ResponseEntity<?> editarEmpresa(
             @PathVariable Long id,
             @RequestHeader(value = "Authorization", required = false) String authHeader,
-            @RequestBody EmpresaRequest request ) {
+            @RequestBody EmpresaRequest request) {
         logJsonRecebido(request);
-        
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             ErrorResponse error = new ErrorResponse("Invalid Token");
             logJsonEnviado(request);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
         }
         String token = authHeader.substring(7);
-        
+
         try {
             if (!empresaService.validarToken(token)) {
                 ErrorResponse error = new ErrorResponse("Invalid token");
@@ -186,13 +187,13 @@ public class EmpresaController {
             }
 
             Empresa empresaAtualizada = empresaService.editarEmpresa(id, request);
-            
+
             Map<String, Object> resposta = new HashMap<>();
             resposta.put("message", "Created");
 
             logJsonEnviado(resposta);
             return ResponseEntity.status(HttpStatus.OK).body(resposta);
-            
+
         } catch (RuntimeException e) {
             if (e.getMessage().equalsIgnoreCase("User not found")) {
                 ErrorResponse error = new ErrorResponse("User not found");
@@ -209,6 +210,51 @@ public class EmpresaController {
             ErrorResponse error = new ErrorResponse("Internal server error");
             logJsonEnviado(error);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
+    }
+
+    //TODO: REVISAR PROTOCOLO - REFERENTE AS VAGAS  
+    @DeleteMapping("/companies/{id}")
+    public ResponseEntity<?> deletarEmpresa(
+            @PathVariable Long id,
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            Map<String, String> resposta = Map.of("message", "invalid token");
+            logJsonEnviado(resposta);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resposta);
+        }
+
+        String token = authHeader.substring(7);
+
+        try {
+            if (!empresaService.validarToken(token)) {
+                Map<String, String> resposta = Map.of("message", "Invalid token");
+                logJsonEnviado(resposta);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resposta);
+            }
+
+            Long companyIdToken = empresaService.getCompanieIdFromToken(token);
+            if (!companyIdToken.equals(id)) {
+                Map<String, String> resposta = Map.of("message", "Forbidden");
+                logJsonEnviado(resposta);
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(resposta);
+            }
+
+            boolean deletado = empresaService.deletarEmpresa(id);
+            if (!deletado) {
+                Map<String, String> resposta = Map.of("message", "User not found");
+                logJsonEnviado(resposta);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resposta);
+            }
+
+            Map<String, String> resposta = Map.of("message", "Company deletedd successfully");
+            logJsonEnviado(resposta);
+            return ResponseEntity.ok(resposta);
+        } catch (Exception e) {
+            Map<String, String> resposta = Map.of("message", "Internal server error");
+            logJsonEnviado(resposta);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(resposta);
         }
     }
 }

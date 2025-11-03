@@ -93,29 +93,6 @@ public class UsuarioController {
         }
     }
 
-    /*@PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
-        try {
-            logJsonRecebido(loginRequest);
-            String token = service.login(loginRequest.getUsername(), loginRequest.getPassword());
-            int expiresIn = service.getExpiration();
-
-            LoginResponse resposta = new LoginResponse(token, expiresIn);
-            logJsonEnviado(resposta);
-            return ResponseEntity.ok(resposta);
-
-        } catch (RuntimeException e) {
-            ErrorResponse error = new ErrorResponse("Invalid credentials");
-            logJsonEnviado(error);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
-
-        } catch (Exception e) {
-            ErrorResponse error = new ErrorResponse("Erro interno do servidor");
-            logJsonEnviado(error);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
-        }
-    }*/
-
     @GetMapping("/users/{id}")
     public ResponseEntity<?> lerDados(
             @PathVariable Long id,
@@ -194,6 +171,7 @@ public class UsuarioController {
 
             logJsonEnviado(usuarioAtualizado);
             return ResponseEntity.ok(usuarioAtualizado);
+            
         } catch (RuntimeException e) {
             if (e.getMessage().equalsIgnoreCase("User not found")) {
                 ErrorResponse error = new ErrorResponse("User not found");
@@ -226,26 +204,26 @@ public class UsuarioController {
         String token = authHeader.substring(7);
 
         try {
-            if (!service.validarToken(token)){
+            if (!service.validarToken(token)) {
                 Map<String, String> resposta = Map.of("message", "Invalid token");
                 logJsonEnviado(resposta);
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resposta);
             }
-            
+
             Long userIdToken = service.getUserIdFromToken(token);
             if (!userIdToken.equals(id)) {
                 Map<String, String> resposta = Map.of("message", "Forbidden");
                 logJsonEnviado(resposta);
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(resposta);
             }
-            
+
             boolean deletado = service.deletarUsuario(id);
             if (!deletado) {
                 Map<String, String> resposta = Map.of("message", "User not found");
                 logJsonEnviado(resposta);
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resposta);
             }
-            
+
             Map<String, String> resposta = Map.of("message", "User deletedd successfully");
             logJsonEnviado(resposta);
             return ResponseEntity.ok(resposta);
@@ -255,8 +233,7 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(resposta);
         }
     }
-    
-    
+
     /*@PostMapping("/logout")
     public ResponseEntity<?> logout(
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
@@ -288,8 +265,6 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(resposta);
         }
     }*/
-
-
     private void logJsonRecebido(Object request) {
         try {
             String jsonRecebido = mapper.writeValueAsString(request);

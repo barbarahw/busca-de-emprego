@@ -6,18 +6,21 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Empresa;
 import com.example.demo.dto.EmpresaRequest;
+import com.example.demo.dto.ErrorResponse;
 import com.example.demo.service.EmpresaService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.tomcat.util.http.parser.Authorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -104,28 +107,6 @@ public class EmpresaController {
         }
     }
 
-    /*@PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
-        try {
-            logJsonRecebido(loginRequest);
-            String token = empresaService.login(loginRequest.getUsername(), loginRequest.getPassword());
-            int expiresIn = empresaService.getExpiration();
-
-            LoginResponse resposta = new LoginResponse(token, expiresIn);
-            logJsonEnviado(resposta);
-            return ResponseEntity.ok(resposta);
-
-        } catch (RuntimeException e) {
-            ErrorResponse error = new ErrorResponse("Invalid credentials");
-            logJsonEnviado(error);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
-
-        } catch (Exception e) {
-            ErrorResponse error = new ErrorResponse("Erro interno do servidor");
-            logJsonEnviado(error);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
-        }
-    }*/
     @GetMapping("/companies/{id}")
     public ResponseEntity<?> lerDados(
             @PathVariable Long id,
@@ -173,6 +154,61 @@ public class EmpresaController {
             Map<String, String> resposta = Map.of("message", "Invalid token");
             logJsonEnviado(resposta);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resposta);
+        }
+    }
+    
+    @PatchMapping("/companies/{id}")
+    public ResponseEntity<?> editarEmpresa(
+            @PathVariable Long id,
+            @RequestHeader(value = "Authorization", required = false) String authHeader,
+            @RequestBody EmpresaRequest request ) {
+        logJsonRecebido(request);
+        
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            ErrorResponse error = new ErrorResponse("Invalid Token");
+            logJsonEnviado(request);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+        }
+        String token = authHeader.substring(7);
+        
+        try {
+            if (!empresaService.validarToken(token)) {
+                ErrorResponse error = new ErrorResponse("Invalid token");
+                logJsonEnviado(error);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+            }
+
+            Long userIdToken = empresaService.getCompanieIdFromToken(token);
+            if (!userIdToken.equals(id)) {
+                ErrorResponse error = new ErrorResponse("Forbidden");
+                logJsonEnviado(error);
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+            }
+
+            Empresa empresaAtualizada = empresaService.editarEmpresa(id, request);
+            
+            Map<String, Object> resposta = new HashMap<>();
+            resposta.put("message", "Created");
+
+            logJsonEnviado(resposta);
+            return ResponseEntity.status(HttpStatus.OK).body(resposta);
+            
+        } catch (RuntimeException e) {
+            if (e.getMessage().equalsIgnoreCase("User not found")) {
+                ErrorResponse error = new ErrorResponse("User not found");
+                logJsonEnviado(error);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+            }
+
+            ErrorResponse error = new ErrorResponse(e.getMessage());
+            logJsonEnviado(error);
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(error);
+
+        } catch (Exception e) {
+
+            ErrorResponse error = new ErrorResponse("Internal server error");
+            logJsonEnviado(error);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
     }
 }

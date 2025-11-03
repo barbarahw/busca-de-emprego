@@ -67,6 +67,26 @@ public class EmpresaService {
         }
     }
     
+    public Empresa editarEmpresa (Long id, EmpresaRequest dto) {
+        Optional<Empresa> empresaOpt = repositorio.findById(id);
+        if (empresaOpt.isEmpty()) {
+            throw new RuntimeException();
+        }
+        
+        Empresa e = empresaOpt.get();
+        
+        if (dto.getName() != null) e.setName(dto.getName());
+        if (dto.getPassword()!= null) e.setPassword(dto.getPassword());
+        if (dto.getEmail()!= null) e.setEmail(dto.getEmail());
+        if (dto.getPhone()!= null) e.setPhone(dto.getPhone());
+        if (dto.getStreet() != null) e.setStreet(dto.getStreet());
+        if (dto.getCity() != null) e.setCity(dto.getCity());
+        if (dto.getState() != null) e.setState(dto.getState());
+        if (dto.getBusiness()!= null) e.setBusiness(dto.getBusiness());
+        
+        return repositorio.save(e);
+    }
+    
     public Long getCompanieIdFromToken(String token) {
         try {
             String subject = jwtUtil.extrairSubject(token);
@@ -74,6 +94,10 @@ public class EmpresaService {
         } catch (Exception e) {
             return null;
         }
+    }
+    
+    public boolean validarToken(String token) {
+        return jwtUtil.validarToken(token);
     }
     
     public Empresa buscarPorId(Long id) {

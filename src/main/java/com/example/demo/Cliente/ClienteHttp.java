@@ -17,6 +17,10 @@ public class ClienteHttp {
         this.baseUrl = baseUrl;
     }
 
+    // ========================================
+    // MÉTODOS DE USUÁRIO
+    // ========================================
+    
     public HttpResponse<String> cadastrarUsuario(String json) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseUrl + "/users"))
@@ -25,9 +29,7 @@ public class ClienteHttp {
                 .build();
 
         logRequisicao("POST", request, json);
-
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
         logResposta(response);
         return response;
     }
@@ -40,9 +42,7 @@ public class ClienteHttp {
                 .build();
 
         logRequisicao("POST", request, loginJson);
-
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
         logResposta(response);
         return response;
     }
@@ -56,9 +56,7 @@ public class ClienteHttp {
                 .build();
 
         logRequisicao("GET", request, null);
-
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
         logResposta(response);
         return response;
     }
@@ -73,9 +71,7 @@ public class ClienteHttp {
                 .build();
 
         logRequisicao("PATCH", request, json);
-
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
         logResposta(response);
         return response;
     }
@@ -90,13 +86,76 @@ public class ClienteHttp {
                 .build();
 
         logRequisicao("DELETE", request, null);
-
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
         logResposta(response);
         return response;
     }
 
+    // ========================================
+    // MÉTODOS DE EMPRESA
+    // ========================================
+    
+    public HttpResponse<String> cadastrarEmpresa(String json) throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl + "/companies"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(json))
+                .build();
+
+        logRequisicao("POST", request, json);
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        logResposta(response);
+        return response;
+    }
+
+    public HttpResponse<String> lerEmpresa(String token) throws Exception {
+        String empresaId = extrairToken(token);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl + "/companies/" + empresaId))
+                .header("Authorization", "Bearer " + token)
+                .GET()
+                .build();
+
+        logRequisicao("GET", request, null);
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        logResposta(response);
+        return response;
+    }
+
+    public HttpResponse<String> editarEmpresa(String token, String json) throws Exception {
+        String empresaId = extrairToken(token);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl + "/companies/" + empresaId))
+                .header("Authorization", "Bearer " + token)
+                .header("Content-Type", "application/json")
+                .method("PATCH", HttpRequest.BodyPublishers.ofString(json))
+                .build();
+
+        logRequisicao("PATCH", request, json);
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        logResposta(response);
+        return response;
+    }
+
+    public HttpResponse<String> excluirEmpresa(String token) throws Exception {
+        String empresaId = extrairToken(token);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl + "/companies/" + empresaId))
+                .header("Authorization", "Bearer " + token)
+                .header("Content-Type", "application/json")
+                .DELETE()
+                .build();
+
+        logRequisicao("DELETE", request, null);
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        logResposta(response);
+        return response;
+    }
+
+    // ========================================
+    // MÉTODOS AUXILIARES
+    // ========================================
+    
     private String extrairToken(String token) {
         try {
             token = token.replace("Bearer ", "").trim();
@@ -116,9 +175,6 @@ public class ClienteHttp {
         }
     }
 
-    // -------------------------------
-    // 🔍 MÉTODOS DE LOG
-    // -------------------------------
     private void logRequisicao(String metodo, HttpRequest request, String body) {
         System.out.println("\n=== [CLIENTE -> SERVIDOR] ===");
         System.out.println("Método: " + metodo);

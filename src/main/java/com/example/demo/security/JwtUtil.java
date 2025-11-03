@@ -2,12 +2,14 @@ package com.example.demo.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import java.util.Base64;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import org.json.JSONObject;
 import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 @Component
@@ -15,13 +17,9 @@ public class JwtUtil {
 
     private final SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     private final long expirationMs = 60*60*1000;
+    
+   
 
-    /**
-     * @param id ID do usuário (user_id ou company_id)
-     * @param username username único
-     * @param role "user" ou "company"
-     * @return token JWT no formato HS256
-     */
     public String gerarToken(String id, String username, String role) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expirationMs);
@@ -42,13 +40,23 @@ public class JwtUtil {
                 .compact();
     }
     
-    /*public String pegarId(String token) {
-        return parseClaims(token).getSubject();
-    }*/
-    
-    /*public String pegarRole(String token) {
-        return (String) parseClaims(token).get("role");
-    }*/
+    public String getRoleFromToken (String token) {
+        try {
+            
+            String[] parts = token.split("\\.");
+            
+            if (parts.length<2) {
+                throw new IllegalArgumentException("Token inválido");
+            }
+            String payload = new String (Base64.getUrlDecoder().decode(parts[1]));
+            JSONObject json = new JSONObject(payload);
+            
+            return json.optString("role", null);
+        } catch (Exception e) {
+            System.out.println("erro ao extrair role do token: " + e.getMessage());
+            return null;
+        }
+    }
 
 
     public String pegarUsername(String token){

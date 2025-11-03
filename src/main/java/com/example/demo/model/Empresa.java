@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package com.example.demo.model;
 
 import jakarta.persistence.*;
@@ -11,48 +8,46 @@ import jakarta.persistence.*;
     @UniqueConstraint(columnNames = {"id"})
 })
 public class Empresa {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int Id;
-    
+
     @Column(nullable = false, length = 150)
     private String name;
-    
+
     @Column(nullable = false, length = 150)
     private String business;
-    
-    @Column (nullable = false, length = 20)
+
+    @Column(nullable = false, length = 20)
     private String username;
-    
-    @Column (nullable = false, length = 20)
+
+    @Column(nullable = false, length = 20)
     private String password;
-    
-    @Column (nullable = false, length = 150)
-    private String street; 
-    
+
+    @Column(nullable = false, length = 150)
+    private String street;
+
     //precisa ser um numero válido, inteiro, positivo ou uma string vazia;
-    @Column (nullable = false, length = 8)
+    @Column(nullable = false, length = 8)
     private String number;
-    
-    @Column (nullable = false, length = 150)
+
+    @Column(nullable = false, length = 150)
     private String city;
-    
-    @Column (nullable = false)
+
+    @Column(nullable = false)
     private String state;
-    
+
     @Column(nullable = false, length = 14)
     private String phone;
-    
-    
+
     //precisa ser email válido
-    @Column (nullable = false, length = 150)
+    @Column(nullable = false, length = 150)
     private String email;
-    
-    @Column 
+
+    @Column
     private String token;
 
-    
     //getters e setters
     public int getId() {
         return Id;
@@ -149,6 +144,5 @@ public class Empresa {
     public void setToken(String token) {
         this.token = token;
     }
-    
-    
+
 }

@@ -57,7 +57,7 @@ public class EmpresaService {
                 return jwtUtil.gerarToken(
                         String.valueOf(empresa.getId()),
                         empresa.getUsername(),
-                        "user"
+                        "company"
                 );
             } else {
                 throw new RuntimeException("Invalid credentials");

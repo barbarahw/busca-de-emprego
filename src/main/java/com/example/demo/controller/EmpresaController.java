@@ -6,9 +6,6 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Empresa;
 import com.example.demo.dto.EmpresaRequest;
-import com.example.demo.dto.ErrorResponse;
-import com.example.demo.dto.LoginRequest;
-import com.example.demo.dto.LoginResponse;
 import com.example.demo.service.EmpresaService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
@@ -20,20 +17,24 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class EmpresaController {
-    private final EmpresaService empresaService; 
+
+    private final EmpresaService empresaService;
     private final ObjectMapper mapper = new ObjectMapper();
-    
+
     @Autowired
-    public EmpresaController (EmpresaService empresaService){
+    public EmpresaController(EmpresaService empresaService) {
         this.empresaService = empresaService;
     }
-    
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleValidationException(MethodArgumentNotValidException ex) {
 
@@ -55,7 +56,7 @@ public class EmpresaController {
 
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(resposta);
     }
-    
+
     private void logJsonEnviado(Object resposta) {
         try {
             String jsonEnviado = mapper.writeValueAsString(resposta);
@@ -64,7 +65,7 @@ public class EmpresaController {
             System.out.println("Erro ao logar JSON enviado: " + e.getMessage());
         }
     }
-    
+
     private void logJsonRecebido(Object request) {
         try {
             String jsonRecebido = mapper.writeValueAsString(request);
@@ -73,22 +74,22 @@ public class EmpresaController {
             System.out.println("Erro ao logar JSON recebido: " + e.getMessage());
         }
     }
-    
+
     @PostMapping("/companies")
     public ResponseEntity<?> cadastrar(@Valid @RequestBody EmpresaRequest request) {
         logJsonRecebido(request);
-        
-        try{
-            
+
+        try {
+
             Empresa e = empresaService.cadastrar(request);
-            
+
             Map<String, String> resposta = new HashMap<>();
             resposta.put("message", "Created");
 
             logJsonEnviado(resposta);
             return ResponseEntity.status(HttpStatus.CREATED).body(resposta);
-            
-        }catch (Exception e) {
+
+        } catch (Exception e) {
             Map<String, String> resposta = new HashMap<>();
             resposta.put("message", e.getMessage());
 
@@ -102,7 +103,7 @@ public class EmpresaController {
             }
         }
     }
-    
+
     /*@PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
         try {
@@ -125,6 +126,53 @@ public class EmpresaController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
     }*/
-    
-    
+    @GetMapping("/companies/{id}")
+    public ResponseEntity<?> lerDados(
+            @PathVariable Long id,
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            Map<String, String> resposta = Map.of("message", "Invalid token");
+            logJsonEnviado(resposta);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resposta);
+        }
+
+        String token = authHeader.substring(7);
+
+        try {
+            Long IdDoToken = empresaService.getCompanieIdFromToken(token);
+
+            if (!IdDoToken.equals(id)) {
+                Map<String, String> resposta = Map.of("message", "Forbidden");
+                logJsonEnviado(resposta);
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(resposta);
+            }
+
+            Empresa empresa = empresaService.buscarPorId(id);
+
+            if (empresa == null) {
+                Map<String, String> resposta = Map.of("message", "User not found");
+                logJsonEnviado(resposta);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resposta);
+            }
+
+            Map<String, Object> resposta = new HashMap<>();
+            resposta.put("name", empresa.getName());
+            resposta.put("bussines", empresa.getBusiness());
+            resposta.put("username", empresa.getUsername());
+            resposta.put("street", empresa.getStreet());
+            resposta.put("number", empresa.getNumber());
+            resposta.put("city", empresa.getCity());
+            resposta.put("state", empresa.getState());
+            resposta.put("phone", empresa.getPhone());
+            resposta.put("email", empresa.getEmail());
+
+            logJsonEnviado(resposta);
+            return ResponseEntity.ok(resposta);
+
+        } catch (Exception e) {
+            Map<String, String> resposta = Map.of("message", "Invalid token");
+            logJsonEnviado(resposta);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resposta);
+        }
+    }
 }

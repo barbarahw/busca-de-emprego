@@ -67,6 +67,19 @@ public class EmpresaService {
         }
     }
     
+    public Long getCompanieIdFromToken(String token) {
+        try {
+            String subject = jwtUtil.extrairSubject(token);
+            return Long.parseLong(subject);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    
+    public Empresa buscarPorId(Long id) {
+        return repositorio.findById(id).orElse(null);
+    }
+    
     public int getExpiration() {
         return jwtUtil.getExpirationInSeconds();
     }

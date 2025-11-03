@@ -93,7 +93,7 @@ public class UsuarioController {
         }
     }
 
-    @PostMapping("/login")
+    /*@PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
         try {
             logJsonRecebido(loginRequest);
@@ -114,7 +114,7 @@ public class UsuarioController {
             logJsonEnviado(error);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
-    }
+    }*/
 
     @GetMapping("/users/{id}")
     public ResponseEntity<?> lerDados(
@@ -257,7 +257,7 @@ public class UsuarioController {
     }
     
     
-    @PostMapping("/logout")
+    /*@PostMapping("/logout")
     public ResponseEntity<?> logout(
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
 
@@ -287,7 +287,7 @@ public class UsuarioController {
             logJsonEnviado(resposta);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(resposta);
         }
-    }
+    }*/
 
 
     private void logJsonRecebido(Object request) {

@@ -44,6 +44,3 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
 👩‍💻 Desenvolvido para fins acadêmicos
 
 
-
-👩‍💻 Desenvolvido para fins acadêmicos
-

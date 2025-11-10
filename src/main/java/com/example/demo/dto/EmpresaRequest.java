@@ -28,7 +28,7 @@ public class EmpresaRequest {
     private String street;
     
     @NotBlank(message = "invalid_format")
-    @Pattern(regexp = "^[1-9][0-9]{0,7}$", message = "invalid_format")
+    @Pattern(regexp = "^[0-9]{0,7}$", message = "invalid_format")
     private String number;
     
     @NotBlank(message = "invalid_format")

@@ -76,14 +76,41 @@ public class EmpresaService {
         
         Empresa e = empresaOpt.get();
         
-        if (dto.getName() != null) e.setName(dto.getName());
-        if (dto.getPassword()!= null) e.setPassword(dto.getPassword());
-        if (dto.getEmail()!= null) e.setEmail(dto.getEmail());
-        if (dto.getPhone()!= null) e.setPhone(dto.getPhone());
-        if (dto.getStreet() != null) e.setStreet(dto.getStreet());
-        if (dto.getCity() != null) e.setCity(dto.getCity());
-        if (dto.getState() != null) e.setState(dto.getState());
-        if (dto.getBusiness()!= null) e.setBusiness(dto.getBusiness());
+        if (dto.getName() != null && !dto.getName().trim().isEmpty()) {
+            e.setName(dto.getName());
+        }
+        
+        if (dto.getPassword()!= null && !dto.getPassword().trim().isEmpty()) {
+            e.setPassword(dto.getPassword());
+        }
+        
+        if (dto.getEmail()!= null && !dto.getEmail().trim().isEmpty()) {
+            e.setEmail(dto.getEmail());
+        }
+        
+        if (dto.getPhone()!= null && !dto.getPhone().trim().isEmpty()) {
+            e.setPhone(dto.getPhone());
+        }
+        
+        if (dto.getStreet()!= null && !dto.getStreet().trim().isEmpty()) {
+            e.setStreet(dto.getStreet());
+        }
+        
+        if (dto.getCity()!= null && !dto.getCity().trim().isEmpty()) {
+            e.setCity(dto.getCity());
+        }
+        
+        if (dto.getState()!= null && !dto.getState().trim().isEmpty()) {
+            e.setState(dto.getState());
+        }
+        
+        if (dto.getBusiness()!= null && !dto.getBusiness().trim().isEmpty()) {
+            e.setBusiness(dto.getBusiness());
+        }
+        
+        if (dto.getNumber()!= null && !dto.getNumber().trim().isEmpty()) {
+            e.setNumber(dto.getNumber());
+        }
         
         return repositorio.save(e);
     }
@@ -96,6 +123,11 @@ public class EmpresaService {
             return null;
         }
     }
+    
+    /*public Long getCompanieIdFromToken(String token) {
+        Claims claims = jwtUtil.parseToken(token);
+        return (Long) claims.get("id");
+    }*/
     
     public String getRoleFromToken(String token) {
         Claims claims = jwtUtil.parseToken(token);

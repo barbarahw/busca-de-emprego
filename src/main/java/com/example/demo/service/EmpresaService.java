@@ -8,6 +8,7 @@ import com.example.demo.repositories.EmpresaRepository;
 import com.example.demo.dto.EmpresaRequest;
 import com.example.demo.model.Empresa;
 import com.example.demo.security.JwtUtil;
+import io.jsonwebtoken.Claims;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -94,6 +95,11 @@ public class EmpresaService {
         } catch (Exception e) {
             return null;
         }
+    }
+    
+    public String getRoleFromToken(String token) {
+        Claims claims = jwtUtil.parseToken(token);
+        return (String) claims.get("role");
     }
     
     public boolean validarToken(String token) {

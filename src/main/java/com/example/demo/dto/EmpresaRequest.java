@@ -16,13 +16,11 @@ public class EmpresaRequest {
     private String business;
     
     @NotBlank(message = "invalid_format")
-    @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "invalid_format")
-    @Size(min = 3, max = 20, message = "invalid_format")
+    @Pattern(regexp = "^[a-zA-Z0-9]{3,20}$", message = "invalid_format")
     private String username;
     
     @NotBlank(message = "invalid_format")
-    @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "invalid_format")
-    @Size(min = 3, max = 20, message = "invalid_format")
+    @Pattern(regexp = "^[a-zA-Z0-9]{3,20}$", message = "invalid_format")
     private String password;
     
     @NotBlank(message = "invalid_format")
@@ -30,8 +28,7 @@ public class EmpresaRequest {
     private String street;
     
     @NotBlank(message = "invalid_format")
-    @Size(min = 1, max = 8, message = "invalid_format")
-    //precisa ser um numero válido, inteiro, positivo ou uma string vazia;
+    @Pattern(regexp = "^[1-9][0-9]{0,7}$", message = "invalid_format")
     private String number;
     
     @NotBlank(message = "invalid_format")
@@ -39,11 +36,14 @@ public class EmpresaRequest {
     private String city;
     
     @NotBlank(message = "invalid_format")
+    @Pattern(regexp = "^[A-Z]{2}$", message = "invalid_format")
     private String state;
     
+    @NotBlank(message = "invalid_format")
     @Pattern(regexp = "^\\d{10,14}$", message = "invalid_format")
     private String phone;
     
+    @NotBlank(message = "invalid_format")
     @Email(message = "invalid_format")
     private String email;
 

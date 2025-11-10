@@ -5,8 +5,6 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.ErrorResponse;
-import com.example.demo.dto.LoginRequest;
-import com.example.demo.dto.LoginResponse;
 import com.example.demo.model.Usuario;
 import com.example.demo.dto.UsuarioRequest;
 import com.example.demo.service.UsuarioService;

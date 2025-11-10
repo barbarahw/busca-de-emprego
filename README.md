@@ -13,6 +13,8 @@ Pré-requisitos:
 
 ou baixar o arquivo zip enviado
 
+antes de iniciar o projeto, rodar o comando ``` mvn clean install ```
+
 2\. Acessar a pasta do projeto
 
 3\. Inicar o SQL via XAMPP

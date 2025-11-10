@@ -9,7 +9,7 @@ Pré-requisitos:
 - Maven instalado
 - Xampp com o MySQL e Apache em execução
 
-1\. Clonar o repositório https://github.com/barbarahw/busca-de-emprego.git
+1\. Clonar o repositório https://github.com/barbarahw/busca-de-emprego
 
 ou baixar o arquivo zip enviado
 

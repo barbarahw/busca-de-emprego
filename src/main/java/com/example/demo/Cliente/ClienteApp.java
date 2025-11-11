@@ -190,42 +190,7 @@ public class ClienteApp {
             System.out.println("❌ Erro ao conectar: " + e.getMessage());
         }
     }
-
-    /*private static void fazerLoginUsuario(Scanner sc, ClienteHttp clienteHttp) {
-        System.out.println("\n--- LOGIN USUÁRIO ---");
-        System.out.print("Username: ");
-        String username = sc.nextLine();
-        System.out.print("Password: ");
-        String password = sc.nextLine();
-
-        String loginJson = String.format("""
-        {
-            "username": "%s",
-            "password": "%s"
-        }
-        """, username, password);
-
-        try {
-            HttpResponse<String> response = clienteHttp.fazerLogin(loginJson);
-
-            if (response.statusCode() == 200) {
-                String responseBody = response.body();
-                if (responseBody.contains("\"token\"")) {
-                    int start = responseBody.indexOf("\"token\"") + 9;
-                    int end = responseBody.indexOf("\"", start);
-                    token = responseBody.substring(start, end);
-                    usernameLogado = username;
-                    tipoUsuario = "USER";
-                    System.out.println("✅ Login realizado com sucesso!");
-                }
-            } else {
-                System.out.println("❌ Erro no login: " + response.body());
-            }
-        } catch (Exception e) {
-            System.out.println("❌ Erro ao conectar: " + e.getMessage());
-        }
-    }*/
-
+    
     private static void lerDadosUsuario(ClienteHttp clienteHttp) {
         System.out.println("\n--- MEUS DADOS ---");
         try {
@@ -360,42 +325,7 @@ public class ClienteApp {
             System.out.println("❌ Erro ao conectar: " + e.getMessage());
         }
     }
-
-    /*private static void fazerLoginEmpresa(Scanner sc, ClienteHttp clienteHttp) {
-        System.out.println("\n--- LOGIN EMPRESA ---");
-        System.out.print("Username: ");
-        String username = sc.nextLine();
-        System.out.print("Password: ");
-        String password = sc.nextLine();
-
-        String loginJson = String.format("""
-        {
-            "username": "%s",
-            "password": "%s"
-        }
-        """, username, password);
-
-        try {
-            HttpResponse<String> response = clienteHttp.fazerLogin(loginJson);
-
-            if (response.statusCode() == 200) {
-                String responseBody = response.body();
-                if (responseBody.contains("\"token\"")) {
-                    int start = responseBody.indexOf("\"token\"") + 9;
-                    int end = responseBody.indexOf("\"", start);
-                    token = responseBody.substring(start, end);
-                    usernameLogado = username;
-                    tipoUsuario = "COMPANY";
-                    System.out.println("✅ Login realizado com sucesso!");
-                }
-            } else {
-                System.out.println("❌ Erro no login: " + response.body());
-            }
-        } catch (Exception e) {
-            System.out.println("❌ Erro ao conectar: " + e.getMessage());
-        }
-    }*/
-
+      
     private static void lerDadosEmpresa(ClienteHttp clienteHttp) {
         System.out.println("\n--- DADOS DA EMPRESA ---");
         try {

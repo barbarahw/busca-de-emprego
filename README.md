@@ -9,9 +9,11 @@ Pré-requisitos:
 - Maven instalado
 - Xampp com o MySQL e Apache em execução
 
-1\. Clonar o repositório https://github.com/barbarahw/busca-de-emprego.git
+1\. Clonar o repositório https://github.com/barbarahw/busca-de-emprego
 
 ou baixar o arquivo zip enviado
+
+antes de iniciar o projeto, rodar o comando ``` mvn clean install ```
 
 2\. Acessar a pasta do projeto
 
@@ -43,7 +45,4 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
 
 👩‍💻 Desenvolvido para fins acadêmicos
 
-
-
-👩‍💻 Desenvolvido para fins acadêmicos
 

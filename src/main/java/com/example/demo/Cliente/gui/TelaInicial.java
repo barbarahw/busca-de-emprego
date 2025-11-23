@@ -98,7 +98,7 @@ public class TelaInicial extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCadastrarEmpresaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarEmpresaActionPerformed
-        new CadastrarEmpresa().setVisible(true);
+        new CadastrarEmpresa(clienteHttp).setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnCadastrarEmpresaActionPerformed
 
@@ -162,7 +162,7 @@ public class TelaInicial extends javax.swing.JFrame {
                         this.dispose();
                         
                         if (tipoUsuario.equals("COMPANY") ) {
-                            MenuInicialEmpresa menuEmpresa = new MenuInicialEmpresa(clienteHttp);
+                            MenuInicialEmpresa menuEmpresa = new MenuInicialEmpresa(clienteHttp, token);
                             menuEmpresa.setVisible(true);
                             
                         }else {

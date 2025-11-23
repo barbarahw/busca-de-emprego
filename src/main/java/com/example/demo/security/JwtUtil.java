@@ -3,21 +3,23 @@ package com.example.demo.security;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import java.util.Base64;
+import java.util.Collections;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import org.json.JSONObject;
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 @Component
 public class JwtUtil {
 
     private final SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     private final long expirationMs = 60*60*1000;
-    
+    private static final Set<String> loggedUsers = Collections.synchronizedSet(new HashSet<>());
    
 
     public String gerarToken(String id, String username, String role) {
@@ -57,6 +59,24 @@ public class JwtUtil {
             return null;
         }
     }
+    
+    public Long getCompanyIdFromToken(String token) {
+        try {
+            Claims claims = parseToken(token);
+
+            String role = claims.get("role", String.class);
+            if (!"company".equalsIgnoreCase(role)) {
+                throw new SecurityException("Token does not belong to a company");
+            }
+
+            String subject = claims.getSubject();
+            return Long.parseLong(subject);
+
+        } catch (Exception e) {
+            System.out.println("Erro ao extrair company_id do token: " + e.getMessage());
+            return null;
+        }
+    }
 
 
     public String pegarUsername(String token){
@@ -92,5 +112,17 @@ public class JwtUtil {
     
     public int getExpirationInSeconds() {
         return (int) (expirationMs / 1000);
+    }
+    
+    public static void addLoggedUser(String username) {
+        loggedUsers.add(username);
+    }
+
+    public static void removeLoggedUser(String username) {
+        loggedUsers.remove(username);
+    }
+
+    public static Set<String> getLoggedUsers() {
+        return loggedUsers;
     }
 }

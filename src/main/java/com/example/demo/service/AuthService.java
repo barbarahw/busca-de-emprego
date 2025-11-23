@@ -4,8 +4,7 @@
  */
 package com.example.demo.service;
 
-import com.example.demo.service.EmpresaService;
-import com.example.demo.service.UsuarioService;
+import com.example.demo.security.JwtUtil;
 import com.example.demo.repositories.EmpresaRepository;
 import com.example.demo.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +24,21 @@ public class AuthService {
     @Autowired
     private EmpresaRepository empresaRepository;
     
+    @Autowired
+    private JwtUtil jwtUtil;
+    
     public String login(String username, String password) {
+        
         if (usuarioRepository.findByUsername(username).isPresent()) {
-            return usuarioService.login(username, password);
+            String token = usuarioService.login(username, password);
+            jwtUtil.addLoggedUser(username);
+            return token;
         }
         
         if (empresaRepository.findByUsername(username).isPresent()) {
-            return empresaService.login(username, password);
+            String token = empresaService.login(username, password);
+            jwtUtil.addLoggedUser(username);
+            return token;
         }
         
         throw new RuntimeException("Invalid Credentials");

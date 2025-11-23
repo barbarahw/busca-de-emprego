@@ -6,6 +6,7 @@ package com.example.demo.Cliente.gui;
 
 import com.example.demo.Cliente.ClienteHttp;
 import java.awt.Image;
+import java.net.http.HttpResponse;
 import javax.swing.ImageIcon;
 
 /**
@@ -14,11 +15,13 @@ import javax.swing.ImageIcon;
  */
 public class MenuInicialEmpresa extends javax.swing.JFrame {
 
+    private String token;
     private final ClienteHttp clienteHttp;
     
-    public MenuInicialEmpresa(ClienteHttp cliente) {
+    public MenuInicialEmpresa(ClienteHttp cliente, String token) {
         initComponents();
         
+        this.token = token;
         this.clienteHttp = cliente;
         
         ImageIcon icon = new ImageIcon(getClass().getResource("/perfil.png"));
@@ -39,9 +42,11 @@ public class MenuInicialEmpresa extends javax.swing.JFrame {
         btnPerfil = new javax.swing.JButton();
         btnCadastrarVaga = new javax.swing.JButton();
         btnCadastrarVaga1 = new javax.swing.JButton();
+        btnLogout = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        btnPerfil.setText("Perfil");
         btnPerfil.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnPerfilActionPerformed(evt);
@@ -49,34 +54,55 @@ public class MenuInicialEmpresa extends javax.swing.JFrame {
         });
 
         btnCadastrarVaga.setText("Cadastrar uma vaga");
+        btnCadastrarVaga.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCadastrarVagaActionPerformed(evt);
+            }
+        });
 
         btnCadastrarVaga1.setText("Visualizar vagas");
+        btnCadastrarVaga1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCadastrarVaga1ActionPerformed(evt);
+            }
+        });
+
+        btnLogout.setText("Logout");
+        btnLogout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLogoutActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(397, Short.MAX_VALUE)
-                .addComponent(btnPerfil, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(25, 25, 25))
             .addGroup(layout.createSequentialGroup()
-                .addGap(53, 53, 53)
+                .addGap(47, 47, 47)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnCadastrarVaga)
                     .addComponent(btnCadastrarVaga1))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(154, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnLogout)
+                    .addComponent(btnPerfil))
+                .addGap(25, 25, 25))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(28, 28, 28)
                 .addComponent(btnPerfil, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(39, 39, 39)
                 .addComponent(btnCadastrarVaga)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnCadastrarVaga1)
-                .addContainerGap(124, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
+                .addComponent(btnLogout)
+                .addGap(30, 30, 30))
         );
 
         pack();
@@ -85,6 +111,40 @@ public class MenuInicialEmpresa extends javax.swing.JFrame {
     private void btnPerfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPerfilActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnPerfilActionPerformed
+
+    private void btnCadastrarVagaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarVagaActionPerformed
+        CadastrarVaga cadastrarVaga = new CadastrarVaga(clienteHttp, token);
+        cadastrarVaga.setVisible(true);
+        //this.dispose();
+        
+    }//GEN-LAST:event_btnCadastrarVagaActionPerformed
+
+    private void btnCadastrarVaga1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarVaga1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnCadastrarVaga1ActionPerformed
+
+    private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
+        try {
+            HttpResponse<String> response = clienteHttp.logout(token);
+
+            if (response.statusCode() == 200) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Logout realizado com sucesso!");
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                        "Erro no logout: " + response.body());
+            }
+
+            token = null;
+            
+            TelaConexao login = new TelaConexao();
+            login.setVisible(true);
+            this.dispose();
+
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Erro ao fazer logout: " + e.getMessage());
+        }
+    }//GEN-LAST:event_btnLogoutActionPerformed
 
     /**
      * @param args the command line arguments
@@ -124,6 +184,7 @@ public class MenuInicialEmpresa extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCadastrarVaga;
     private javax.swing.JButton btnCadastrarVaga1;
+    private javax.swing.JButton btnLogout;
     private javax.swing.JButton btnPerfil;
     // End of variables declaration//GEN-END:variables
 }

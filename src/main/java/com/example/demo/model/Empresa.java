@@ -45,7 +45,6 @@ public class Empresa {
     @Column(nullable = false, length = 150)
     private String email;
 
-    @Column
     private String token;
 
     //getters e setters

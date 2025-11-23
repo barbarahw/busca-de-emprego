@@ -232,37 +232,7 @@ public class UsuarioController {
         }
     }
 
-    /*@PostMapping("/logout")
-    public ResponseEntity<?> logout(
-            @RequestHeader(value = "Authorization", required = false) String authHeader) {
-
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            Map<String, String> resposta = Map.of("message", "Invalid Token");
-            logJsonEnviado(resposta);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resposta);
-        }
-
-        String token = authHeader.substring(7);
-
-        try {
-            if (!service.validarToken(token)) {
-                Map<String, String> resposta = Map.of("message", "Invalid Token");
-                logJsonEnviado(resposta);
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resposta);
-            }
-
-            service.logout(token);
-
-            Map<String, String> resposta = Map.of("message", "OK");
-            logJsonEnviado(resposta);
-            return ResponseEntity.ok(resposta);
-
-        } catch (Exception e) {
-            Map<String, String> resposta = Map.of("message", "Internal server error");
-            logJsonEnviado(resposta);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(resposta);
-        }
-    }*/
+    
     private void logJsonRecebido(Object request) {
         try {
             String jsonRecebido = mapper.writeValueAsString(request);

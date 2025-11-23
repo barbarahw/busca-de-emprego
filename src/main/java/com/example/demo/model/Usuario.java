@@ -37,7 +37,6 @@ public class Usuario {
     @Column (length = 600)
     private String education;
     
-    @Column 
     private String token;
 
     public String getExperience() {

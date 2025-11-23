@@ -8,16 +8,14 @@ import com.example.demo.dto.ErrorResponse;
 import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.LoginResponse;
 import com.example.demo.security.JwtUtil;
-import com.example.demo.service.UsuarioService;
-import com.example.demo.service.EmpresaService;
 import com.example.demo.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -25,6 +23,8 @@ public class AuthController {
     
     @Autowired
     private AuthService authService;
+    
+    @Autowired private JwtUtil jwtUtil;
     
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
@@ -46,7 +46,17 @@ public class AuthController {
     }
     
     @PostMapping("/logout")
-    public ResponseEntity<?> logout() {
-        return ResponseEntity.ok(new ErrorResponse("Logout efetuado com sucesso"));
+    public ResponseEntity<?> logout(@RequestHeader("Authorization") String authHeader) {
+    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse("Token inválido ou ausente"));
     }
+
+    String token = authHeader.substring(7);
+    String username = jwtUtil.pegarUsername(token);
+
+    jwtUtil.removeLoggedUser(username);
+
+    return ResponseEntity.ok(new ErrorResponse("Logout efetuado com sucesso"));
+}
 }

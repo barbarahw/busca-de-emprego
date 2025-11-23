@@ -1,78 +1,42 @@
 package com.example.demo.dto;
 
 public class VagaResponse {
-    private Long id;
+
+    private Long job_id;
     private String title;
     private String area;
+    private String company;
     private String description;
-    private String location;
-    private String contact;
+    private String state;
+    private String city;
     private Double salary;
-    private Long companyId;
+    private String contact;
 
-    public VagaResponse() {}
+    // Getters e setters
+    public Long getJob_id() { return job_id; }
+    public void setJob_id(Long job_id) { this.job_id = job_id; }
 
-    public Long getId() {
-        return id;
-    }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getArea() { return area; }
+    public void setArea(String area) { this.area = area; }
 
-    public String getTitle() {
-        return title;
-    }
+    public String getCompany() { return company; }
+    public void setCompany(String company) { this.company = company; }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public String getArea() {
-        return area;
-    }
+    public String getState() { return state; }
+    public void setState(String state) { this.state = state; }
 
-    public void setArea(String area) {
-        this.area = area;
-    }
+    public String getCity() { return city; }
+    public void setCity(String city) { this.city = city; }
 
-    public String getDescription() {
-        return description;
-    }
+    public Double getSalary() { return salary; }
+    public void setSalary(Double salary) { this.salary = salary; }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public String getContact() {
-        return contact;
-    }
-
-    public void setContact(String contact) {
-        this.contact = contact;
-    }
-
-    public Double getSalary() {
-        return salary;
-    }
-
-    public void setSalary(Double salary) {
-        this.salary = salary;
-    }
-
-    public Long getCompanyId() {
-        return companyId;
-    }
-
-    public void setCompanyId(Long companyId) {
-        this.companyId = companyId;
-    }
+    public String getContact() { return contact; }
+    public void setContact(String contact) { this.contact = contact; }
 }

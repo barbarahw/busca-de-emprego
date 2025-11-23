@@ -4,17 +4,23 @@
  */
 package com.example.demo.Cliente.gui;
 
+import com.example.demo.Cliente.ClienteHttp;
+import java.net.http.HttpResponse;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author bwosi
  */
 public class CadastrarEmpresa extends javax.swing.JFrame {
 
-    /**
-     * Creates new form CadastrarEmpresa
-     */
-    public CadastrarEmpresa() {
+    private final ClienteHttp clienteHttp;
+    
+    public CadastrarEmpresa(ClienteHttp clienteHttp) {
         initComponents();
+        this.clienteHttp = clienteHttp;
+        carregarEstados();
+
     }
 
     /**
@@ -104,6 +110,11 @@ public class CadastrarEmpresa extends javax.swing.JFrame {
         lblEstado.setText("Estado:");
 
         CBEstado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        CBEstado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CBEstadoActionPerformed(evt);
+            }
+        });
 
         txtTelefone.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -122,6 +133,11 @@ public class CadastrarEmpresa extends javax.swing.JFrame {
         lblEmail.setText("Email:");
 
         btnCadastrar.setText("Cadastrar");
+        btnCadastrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCadastrarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -264,6 +280,56 @@ public class CadastrarEmpresa extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtEmailActionPerformed
 
+    private void CBEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CBEstadoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_CBEstadoActionPerformed
+
+    private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
+        String name = txtNome.getText().trim();
+        String business = txtRamo.getText().trim();
+        String username = txtUsername.getText().trim();
+        String password = txtSenha.getText().trim();
+        String street = txtRua.getText().trim();
+        String number = txtNumero.getText().trim();
+        String city = txtCidade.getText().trim();
+        String state = (String) CBEstado.getSelectedItem();
+        String email = txtEmail.getText().trim();
+        String phone = txtTelefone.getText().trim();
+        
+        StringBuilder jsonBuilder = new StringBuilder();
+        jsonBuilder.append(String.format("""
+                {
+                  "name": "%s",
+                  "business": "%s",
+                  "username": "%s",
+                  "password": "%s",
+                  "street": "%s",
+                  "number": "%s",
+                  "city": "%s",
+                  "state": "%s",
+                  "email": "%s",
+                  "phone": "%s"
+                }
+                """, name,business, username, password, street, number, city, state, email, phone));
+        
+        try {
+            HttpResponse<String> response = clienteHttp.cadastrarEmpresa(jsonBuilder.toString());
+            if (response.statusCode() == 201) {
+                JOptionPane.showMessageDialog(this, "Cadastro realizado com sucesso!");
+                TelaInicial telaInicial = new TelaInicial(clienteHttp);
+                telaInicial.setVisible(true);
+                this.dispose();
+
+            } else {
+                JOptionPane.showMessageDialog(this, "Erro ao cadastrar: " + response.body());
+
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Erro ao conectar: " + e.getMessage());
+
+        }
+    }//GEN-LAST:event_btnCadastrarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -294,7 +360,7 @@ public class CadastrarEmpresa extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CadastrarEmpresa().setVisible(true);
+                //new CadastrarEmpresa().setVisible(true);
             }
         });
     }
@@ -323,4 +389,19 @@ public class CadastrarEmpresa extends javax.swing.JFrame {
     private javax.swing.JTextField txtTelefone;
     private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
+
+    private void carregarEstados() {
+        String[] estados = {
+            "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES",
+            "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR",
+            "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC",
+            "SP", "SE", "TO"
+        };
+        
+        CBEstado.removeAllItems();
+        CBEstado.addItem("Selecione");
+        for (String estado : estados) {
+            CBEstado.addItem(estado);
+        }
+    }
 }

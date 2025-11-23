@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.VagaFiltroRequest;
 import com.example.demo.dto.VagaRequest;
 import com.example.demo.dto.VagaResponse;
 import com.example.demo.model.Vaga;
@@ -12,13 +13,13 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/jobs")
+@RequestMapping
 public class VagaController {
 
     @Autowired
     private VagaService vagaService;
 
-    @PostMapping
+    @PostMapping ("/jobs")
     public ResponseEntity<?> cadastrarVaga(@RequestHeader("Authorization") String authHeader,
                                        @RequestBody VagaRequest request) {
         try {
@@ -34,9 +35,39 @@ public class VagaController {
                 "details", List.of(Map.of("error", e.getMessage()))
             ));
         } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("message", "Internal error"));
+        }
+    }
+    
+    
+    @PostMapping("/companies/{companyId}/jobs")
+    public ResponseEntity<?> listarVagasEmpresa(
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable("companyId") Long companyId,
+            @RequestBody(required = false) VagaFiltroRequest filtros) {
+
+        try {
+            String token = authHeader.replace("Bearer ", "");
+
+            List<VagaResponse> lista = vagaService.listarVagasPorEmpresa(token, companyId, filtros);
+
+            return ResponseEntity.ok(Map.of("items", lista));
+
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", e.getMessage()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(422).body(Map.of(
+                    "message", "Validation error",
+                    "code", "UNPROCESSABLE",
+                    "details", List.of(Map.of("error", e.getMessage()))
+            ));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(Map.of("message", e.getMessage()));
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Invalid token"));
         }
-    }   
+    }
+
    
     
 }

@@ -153,6 +153,24 @@ public class ClienteHttp {
     }
 
     // ========================================
+    // MÉTODOS DE VAGA
+    // ========================================
+    
+    public HttpResponse<String> cadastrarVaga(String json, String token) throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl + "/jobs"))
+                .header("Authorization", "Bearer " + token)
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(json))
+                .build();
+        
+        logRequisicao("POST", request, json);
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        logResposta(response);
+        return response;
+    }
+    
+    // ========================================
     // MÉTODOS AUXILIARES
     // ========================================
     

@@ -1,14 +1,26 @@
 package com.example.demo.dto;
 
 public class VagaRequest {
+    private Long id;
     private String title;
     private String area;
     private String description;
-    private String location;
+    private String state;
+    private String city;
     private String contact;
     private Double salary;
+    private Long companyId;
 
-    public VagaRequest() {}
+    public VagaRequest() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getTitle() {
         return title;
@@ -34,13 +46,23 @@ public class VagaRequest {
         this.description = description;
     }
 
-    public String getLocation() {
-        return location;
+    public String getState() {
+        return state;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setState(String state) {
+        this.state = state;
     }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    
 
     public String getContact() {
         return contact;
@@ -56,5 +78,13 @@ public class VagaRequest {
 
     public void setSalary(Double salary) {
         this.salary = salary;
+    }
+
+    public Long getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(Long companyId) {
+        this.companyId = companyId;
     }
 }

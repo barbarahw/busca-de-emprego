@@ -2,10 +2,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package com.example.demo.Cliente.gui;
+package com.example.demo.Cliente.gui.usuario;
 
 import com.example.demo.Cliente.ClienteHttp;
+import com.example.demo.Cliente.gui.TelaConexao;
 import java.awt.Image;
+import java.net.http.HttpResponse;
 import javax.swing.ImageIcon;
 
 /**
@@ -15,11 +17,13 @@ import javax.swing.ImageIcon;
 public class MenuInicialUser extends javax.swing.JFrame {
 
     private final ClienteHttp clienteHttp;
+    private String token;
     
-    public MenuInicialUser(ClienteHttp cliente) {
+    public MenuInicialUser(ClienteHttp cliente, String token) {
         initComponents();
         
         this.clienteHttp = cliente;
+        this.token = token;
         
         ImageIcon icon = new ImageIcon(getClass().getResource("/perfil.png"));
         Image img = icon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
@@ -75,7 +79,26 @@ public class MenuInicialUser extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
-        // TODO add your handling code here:
+        try {
+            HttpResponse<String> response = clienteHttp.logout(token);
+
+            if (response.statusCode() == 200) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Logout realizado com sucesso!");
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                        "Erro no logout: " + response.body());
+            }
+
+            token = null;
+            
+            TelaConexao login = new TelaConexao();
+            login.setVisible(true);
+            this.dispose();
+
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Erro ao fazer logout: " + e.getMessage());
+        }
     }//GEN-LAST:event_btnLogoutActionPerformed
 
     /**

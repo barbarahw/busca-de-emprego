@@ -2,9 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package com.example.demo.Cliente.gui;
+package com.example.demo.Cliente.gui.empresa;
 
 import com.example.demo.Cliente.ClienteHttp;
+import com.example.demo.Cliente.gui.usuario.MenuInicialUser;
+import com.example.demo.Cliente.gui.TelaConexao;
 import java.awt.Image;
 import java.net.http.HttpResponse;
 import javax.swing.ImageIcon;
@@ -41,7 +43,7 @@ public class MenuInicialEmpresa extends javax.swing.JFrame {
 
         btnPerfil = new javax.swing.JButton();
         btnCadastrarVaga = new javax.swing.JButton();
-        btnCadastrarVaga1 = new javax.swing.JButton();
+        btnVisualizarVaga = new javax.swing.JButton();
         btnLogout = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -60,10 +62,10 @@ public class MenuInicialEmpresa extends javax.swing.JFrame {
             }
         });
 
-        btnCadastrarVaga1.setText("Visualizar vagas");
-        btnCadastrarVaga1.addActionListener(new java.awt.event.ActionListener() {
+        btnVisualizarVaga.setText("Visualizar vagas");
+        btnVisualizarVaga.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCadastrarVaga1ActionPerformed(evt);
+                btnVisualizarVagaActionPerformed(evt);
             }
         });
 
@@ -82,7 +84,7 @@ public class MenuInicialEmpresa extends javax.swing.JFrame {
                 .addGap(47, 47, 47)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnCadastrarVaga)
-                    .addComponent(btnCadastrarVaga1))
+                    .addComponent(btnVisualizarVaga))
                 .addContainerGap(154, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -99,7 +101,7 @@ public class MenuInicialEmpresa extends javax.swing.JFrame {
                 .addGap(39, 39, 39)
                 .addComponent(btnCadastrarVaga)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnCadastrarVaga1)
+                .addComponent(btnVisualizarVaga)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
                 .addComponent(btnLogout)
                 .addGap(30, 30, 30))
@@ -119,9 +121,35 @@ public class MenuInicialEmpresa extends javax.swing.JFrame {
         
     }//GEN-LAST:event_btnCadastrarVagaActionPerformed
 
-    private void btnCadastrarVaga1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarVaga1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnCadastrarVaga1ActionPerformed
+    private void btnVisualizarVagaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVisualizarVagaActionPerformed
+        try {
+
+            String json = "{ \"filters\": [] }";
+
+            HttpResponse<String> response = clienteHttp.buscarVagas(token, json);
+
+            if (response.statusCode() == 200) {
+                String body = response.body();
+
+                javax.swing.JOptionPane.showMessageDialog(this,
+                        "Vagas encontradas:\n" + body);
+
+            } else if (response.statusCode() == 404) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                        "Não há vagas cadastradas.");
+            } else if (response.statusCode() == 401) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                        "Token inválido. Faça login novamente.");
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                        "Erro inesperado: " + response.body());
+            }
+
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Erro ao buscar vagas: " + e.getMessage());
+        }
+    }//GEN-LAST:event_btnVisualizarVagaActionPerformed
 
     private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
         try {
@@ -183,8 +211,8 @@ public class MenuInicialEmpresa extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCadastrarVaga;
-    private javax.swing.JButton btnCadastrarVaga1;
     private javax.swing.JButton btnLogout;
     private javax.swing.JButton btnPerfil;
+    private javax.swing.JButton btnVisualizarVaga;
     // End of variables declaration//GEN-END:variables
 }

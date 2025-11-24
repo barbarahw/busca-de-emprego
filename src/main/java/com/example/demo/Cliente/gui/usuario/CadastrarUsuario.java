@@ -2,9 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package com.example.demo.Cliente.gui;
+package com.example.demo.Cliente.gui.usuario;
 
+import com.example.demo.Cliente.gui.empresa.CadastrarEmpresa;
 import com.example.demo.Cliente.ClienteHttp;
+import com.example.demo.Cliente.gui.TelaInicial;
 import java.net.http.HttpResponse;
 import javax.swing.JOptionPane;
 

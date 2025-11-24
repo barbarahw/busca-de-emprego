@@ -27,7 +27,7 @@
               <EmptySpace min="-2" pref="47" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="btnCadastrarVaga" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="btnCadastrarVaga1" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnVisualizarVaga" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace pref="154" max="32767" attributes="0"/>
           </Group>
@@ -49,7 +49,7 @@
               <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
               <Component id="btnCadastrarVaga" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Component id="btnCadastrarVaga1" min="-2" max="-2" attributes="0"/>
+              <Component id="btnVisualizarVaga" min="-2" max="-2" attributes="0"/>
               <EmptySpace pref="44" max="32767" attributes="0"/>
               <Component id="btnLogout" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
@@ -74,12 +74,12 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCadastrarVagaActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="btnCadastrarVaga1">
+    <Component class="javax.swing.JButton" name="btnVisualizarVaga">
       <Properties>
         <Property name="text" type="java.lang.String" value="Visualizar vagas"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCadastrarVaga1ActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnVisualizarVagaActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btnLogout">

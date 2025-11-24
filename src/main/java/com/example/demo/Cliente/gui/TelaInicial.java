@@ -4,6 +4,10 @@
  */
 package com.example.demo.Cliente.gui;
 
+import com.example.demo.Cliente.gui.usuario.MenuInicialUser;
+import com.example.demo.Cliente.gui.usuario.CadastrarUsuario;
+import com.example.demo.Cliente.gui.empresa.MenuInicialEmpresa;
+import com.example.demo.Cliente.gui.empresa.CadastrarEmpresa;
 import com.example.demo.Cliente.ClienteHttp;
 import java.net.http.HttpResponse;
 import javax.swing.JOptionPane;
@@ -166,7 +170,7 @@ public class TelaInicial extends javax.swing.JFrame {
                             menuEmpresa.setVisible(true);
                             
                         }else {
-                            MenuInicialUser menuUser = new MenuInicialUser(clienteHttp);
+                            MenuInicialUser menuUser = new MenuInicialUser(clienteHttp, token);
                             menuUser.setVisible(true);
                         }
                     }

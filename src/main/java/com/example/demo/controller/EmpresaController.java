@@ -121,7 +121,7 @@ public class EmpresaController {
         String token = authHeader.substring(7);
 
         try {
-            Long IdDoToken = empresaService.getCompanieIdFromToken(token);
+            Long IdDoToken = empresaService.getCompanyIdFromToken(token);
 
             if (!IdDoToken.equals(id)) {
                 Map<String, String> resposta = Map.of("message", "Forbidden");
@@ -180,7 +180,7 @@ public class EmpresaController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resposta);
             }
             
-            Long idDoToken = empresaService.getCompanieIdFromToken(token);
+            Long idDoToken = empresaService.getCompanyIdFromToken(token);
             String role = empresaService.getRoleFromToken(token);
             
             if (!idDoToken.equals(id)) {
@@ -241,7 +241,7 @@ public class EmpresaController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resposta);
             }
 
-            Long companyIdToken = empresaService.getCompanieIdFromToken(token);
+            Long companyIdToken = empresaService.getCompanyIdFromToken(token);
             if (!companyIdToken.equals(id)) {
                 Map<String, String> resposta = Map.of("message", "Forbidden");
                 logJsonEnviado(resposta);

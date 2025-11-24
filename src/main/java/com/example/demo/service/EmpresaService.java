@@ -115,7 +115,7 @@ public class EmpresaService {
         return repositorio.save(e);
     }
     
-    public Long getCompanieIdFromToken(String token) {
+    public Long getCompanyIdFromToken(String token) {
         try {
             String subject = jwtUtil.extrairSubject(token);
             return Long.parseLong(subject);
@@ -123,11 +123,6 @@ public class EmpresaService {
             return null;
         }
     }
-    
-    /*public Long getCompanieIdFromToken(String token) {
-        Claims claims = jwtUtil.parseToken(token);
-        return (Long) claims.get("id");
-    }*/
     
     public String getRoleFromToken(String token) {
         Claims claims = jwtUtil.parseToken(token);

@@ -215,4 +215,19 @@ public class ClienteHttp {
     }
     
     
+    public HttpResponse<String> logout(String token) throws Exception {
+    HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(baseUrl + "/logout"))
+            .header("Authorization", "Bearer " + token)
+            .POST(HttpRequest.BodyPublishers.noBody())
+            .build();
+
+    logRequisicao("POST", request, null);
+    HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+    logResposta(response);
+    
+    return response;
+}
+    
+    
 }

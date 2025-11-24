@@ -4,6 +4,7 @@ import com.example.demo.dto.VagaFiltroRequest;
 import com.example.demo.dto.VagaRequest;
 import com.example.demo.dto.VagaResponse;
 import com.example.demo.model.Vaga;
+import com.example.demo.security.JwtUtil;
 import com.example.demo.service.VagaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -16,6 +17,10 @@ import java.util.Map;
 @RequestMapping
 public class VagaController {
 
+    @Autowired
+    private JwtUtil jwtUtil;
+    
+    
     @Autowired
     private VagaService vagaService;
 
@@ -66,6 +71,28 @@ public class VagaController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Invalid token"));
         }
+    }
+    
+    
+    @PostMapping("jobs/search")
+    public ResponseEntity<?> listarVagasUser(
+            @RequestHeader("Authorization") String token,
+            @RequestBody VagaFiltroRequest request) {
+        
+        String jwt = token.replace("Bearer ", "");
+        
+        if (!jwtUtil.validarToken(jwt)) {
+            return ResponseEntity.status(401)
+                    .body(Map.of("message", "Invalid Token"));
+        }
+        
+        var result = vagaService.buscarVagas(request);
+        
+        if (result.isEmpty()) {
+            return ResponseEntity.status(404).body(Map.of("message", "Job not found"));
+        }
+        
+        return ResponseEntity.ok(Map.of("items", result));
     }
 
    

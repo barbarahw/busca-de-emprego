@@ -37,7 +37,6 @@ public class VagaService {
         Empresa empresa = empresaRepository.findById(empresaId)
                 .orElseThrow(() -> new IllegalArgumentException("Company not found"));
 
-
         if (req.getTitle() == null || req.getTitle().trim().length() < 3 || req.getTitle().length() > 150) {
             throw new IllegalArgumentException("Invalid title");
         }
@@ -84,8 +83,6 @@ public class VagaService {
         return vagaRepository.save(vaga);
     }
 
-    
-    
     public List<VagaResponse> listarVagasPorEmpresa(String token, Long companyId, VagaFiltroRequest filtros) {
 
         Long empresaIdToken = jwtUtil.getCompanyIdFromToken(token);
@@ -150,7 +147,7 @@ public class VagaService {
             r.setCompany(v.getCompany().getName());
             r.setDescription(v.getDescription());
             r.setState(v.getState());
-            
+
             r.setCity(v.getCity());
             r.setSalary(v.getSalary());
             r.setContact(v.getCompany().getEmail());
@@ -158,11 +155,85 @@ public class VagaService {
         }).toList();
     }
 
+    public List<VagaResponse> buscarVagas(VagaFiltroRequest filtros) {
+
+        List<Vaga> vagas = vagaRepository.findAll();
+
+        if (filtros != null && filtros.getFilters() != null && !filtros.getFilters().isEmpty()) {
+
+            VagaFiltroRequest.Filtro f = filtros.getFilters().get(0);
+
+            vagas = vagas.stream().filter(v -> {
+
+                boolean ok = true;
+
+                if (f.title != null && !f.title.isBlank()) {
+                    if (!v.getTitle().toLowerCase().contains(f.title.toLowerCase())) {
+                        ok = false;
+                    }
+                }
+
+                if (f.area != null && !f.area.isBlank()) {
+                    if (!v.getArea().equalsIgnoreCase(f.area)) {
+                        ok = false;
+                    }
+                }
+
+                if (f.company != null && !f.company.isBlank()) {
+                    if (!v.getCompany().getName().equalsIgnoreCase(f.company)) {
+                        ok = false;
+                    }
+                }
+
+                if (f.state != null && !f.state.isBlank()) {
+                    if (!v.getState().equalsIgnoreCase(f.state)) {
+                        ok = false;
+                    }
+                }
+
+                if (f.city != null && !f.city.isBlank()) {
+                    if (!v.getCity().equalsIgnoreCase(f.city)) {
+                        ok = false;
+                    }
+                }
+
+                if (f.salary_range != null) {
+                    Double sal = v.getSalary();
+
+                    if (sal != null) {
+                        if (f.salary_range.min != null && sal < f.salary_range.min) {
+                            ok = false;
+                        }
+                        if (f.salary_range.max != null && sal > f.salary_range.max) {
+                            ok = false;
+                        }
+                    }
+                }
+
+                return ok;
+
+            }).toList();
+        }
+
+        return vagas.stream().map(v -> {
+            VagaResponse r = new VagaResponse();
+            r.setJob_id(v.getId());
+            r.setTitle(v.getTitle());
+            r.setArea(v.getArea());
+            r.setCompany(v.getCompany().getName());
+            r.setDescription(v.getDescription());
+            r.setState(v.getState());
+            r.setCity(v.getCity());
+            r.setSalary(v.getSalary());
+            r.setContact(v.getCompany().getEmail());
+            return r;
+        }).toList();
+    }
 
     public List<Vaga> listAll() {
         return vagaRepository.findAll();
     }
-    
+
     public List<Vaga> listarVagasDaEmpresa(String token) {
 
         Long companyId = jwtUtil.getCompanyIdFromToken(token);

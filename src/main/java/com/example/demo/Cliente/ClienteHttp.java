@@ -170,6 +170,21 @@ public class ClienteHttp {
         return response;
     }
     
+    public HttpResponse<String> buscarVagas(String token, String filtrosJson) throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl + "/jobs/search"))
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + token)
+                .POST(HttpRequest.BodyPublishers.ofString(filtrosJson))
+                .build();
+
+        logRequisicao("POST", request, filtrosJson);
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        logResposta(response);
+
+        return response;
+    }
+    
     // ========================================
     // MÉTODOS AUXILIARES
     // ========================================

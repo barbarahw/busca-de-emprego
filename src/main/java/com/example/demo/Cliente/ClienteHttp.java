@@ -185,11 +185,55 @@ public class ClienteHttp {
         return response;
     }
     
+    public HttpResponse<String> buscarVagasEmpresa(String token, String companyId, String filtrosJson) throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl + "/companies/" + companyId + "/jobs"))
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + token)
+                .POST(HttpRequest.BodyPublishers.ofString(filtrosJson))
+                .build();
+        
+        logRequisicao("POST", request, filtrosJson);
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        logResposta(response);
+
+        return response;
+    }
+    
+    public HttpResponse<String> editarVaga(int id, String json, String token) throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl + "/jobs/" + id))
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + token)
+                .method("PATCH", HttpRequest.BodyPublishers.ofString(json))
+                .build();
+        
+        logRequisicao("PATCH", request, json);
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        logResposta(response);
+        return response;
+    }
+    
+    public HttpResponse<String> deletarVaga(int id, String token) throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl + "/jobs/" + id))
+                .header("Authorization", "Bearer " + token)
+                .header("Content-Type", "application/json")
+                .DELETE()
+                .build();
+        
+        logRequisicao("DELETE", request, null);
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        logResposta(response);
+        return response;
+    }
+    
+    
     // ========================================
     // MÉTODOS AUXILIARES
     // ========================================
     
-    private String extrairToken(String token) {
+    public String extrairToken(String token) {
         try {
             token = token.replace("Bearer ", "").trim();
 

@@ -139,7 +139,7 @@ public class EmpresaController {
 
             Map<String, Object> resposta = new HashMap<>();
             resposta.put("name", empresa.getName());
-            resposta.put("bussines", empresa.getBusiness());
+            resposta.put("business", empresa.getBusiness());
             resposta.put("username", empresa.getUsername());
             resposta.put("street", empresa.getStreet());
             resposta.put("number", empresa.getNumber());

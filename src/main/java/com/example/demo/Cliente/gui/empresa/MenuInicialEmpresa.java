@@ -7,9 +7,13 @@ package com.example.demo.Cliente.gui.empresa;
 import com.example.demo.Cliente.ClienteHttp;
 import com.example.demo.Cliente.gui.usuario.MenuInicialUser;
 import com.example.demo.Cliente.gui.TelaConexao;
+import com.example.demo.Cliente.gui.TelaInicial;
 import java.awt.Image;
 import java.net.http.HttpResponse;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  *
@@ -19,17 +23,17 @@ public class MenuInicialEmpresa extends javax.swing.JFrame {
 
     private String token;
     private final ClienteHttp clienteHttp;
-    
+
     public MenuInicialEmpresa(ClienteHttp cliente, String token) {
         initComponents();
-        
+
         this.token = token;
         this.clienteHttp = cliente;
-        
+
         ImageIcon icon = new ImageIcon(getClass().getResource("/perfil.png"));
         Image img = icon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
         btnPerfil.setIcon(new ImageIcon(img));
-        
+
     }
 
     /**
@@ -118,35 +122,48 @@ public class MenuInicialEmpresa extends javax.swing.JFrame {
         CadastrarVaga cadastrarVaga = new CadastrarVaga(clienteHttp, token);
         cadastrarVaga.setVisible(true);
         //this.dispose();
-        
+
     }//GEN-LAST:event_btnCadastrarVagaActionPerformed
 
     private void btnVisualizarVagaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVisualizarVagaActionPerformed
         try {
+            String json = "{ \"filters\": [{}] }";
 
-            String json = "{ \"filters\": [] }";
-
-            HttpResponse<String> response = clienteHttp.buscarVagas(token, json);
+            String  companyId = clienteHttp.extrairToken(token);
+            
+            HttpResponse<String> response = clienteHttp.buscarVagasEmpresa(token, companyId, json);
 
             if (response.statusCode() == 200) {
-                String body = response.body();
+                JSONObject jsonObj = new JSONObject(response.body());
+                JSONArray vagas = jsonObj.getJSONArray("items");
+                
+                if (vagas.length() == 0) {
+                    JOptionPane.showMessageDialog(this, "Nenhuma vaga encontrada.");
+                    return;
+                }
+                
+                ViewVagasCompany viewVagas = new ViewVagasCompany(vagas, clienteHttp, token);
+                viewVagas.setVisible(true);
+                return;
 
-                javax.swing.JOptionPane.showMessageDialog(this,
-                        "Vagas encontradas:\n" + body);
-
-            } else if (response.statusCode() == 404) {
-                javax.swing.JOptionPane.showMessageDialog(this,
-                        "Não há vagas cadastradas.");
-            } else if (response.statusCode() == 401) {
-                javax.swing.JOptionPane.showMessageDialog(this,
-                        "Token inválido. Faça login novamente.");
-            } else {
-                javax.swing.JOptionPane.showMessageDialog(this,
-                        "Erro inesperado: " + response.body());
             }
+            if (response.statusCode() == 404) {
+                JOptionPane.showMessageDialog(this,
+                        "Não há vagas cadastradas.");
+                
+            } else if (response.statusCode() == 401) {
+                JOptionPane.showMessageDialog(this,
+                        "Token inválido. Faça login novamente.");
+            } else if (response.statusCode() == 403) {
+                JOptionPane.showMessageDialog(this, "Acesso proibido (403). Esta empresa só pode ver as próprias vagas.");
+                return;
+            }
+            
+            JOptionPane.showMessageDialog(this,
+                    "Erro inesperado: " + response.body());
 
         } catch (Exception e) {
-            javax.swing.JOptionPane.showMessageDialog(this,
+            JOptionPane.showMessageDialog(this,
                     "Erro ao buscar vagas: " + e.getMessage());
         }
     }//GEN-LAST:event_btnVisualizarVagaActionPerformed
@@ -163,9 +180,9 @@ public class MenuInicialEmpresa extends javax.swing.JFrame {
             }
 
             token = null;
-            
-            TelaConexao login = new TelaConexao();
-            login.setVisible(true);
+
+            TelaInicial inicial = new TelaInicial(clienteHttp);
+            inicial.setVisible(true);
             this.dispose();
 
         } catch (Exception e) {

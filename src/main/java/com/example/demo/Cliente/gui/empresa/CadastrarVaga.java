@@ -166,7 +166,6 @@ public class CadastrarVaga extends javax.swing.JFrame {
         String description = txtDesc.getText().trim();
         String state = (String) cbEstado.getSelectedItem();
         String city = txtCidade.getText().trim();
-        String contact = "pegar da empresa";
         String salary = txtSalario.getText();
         
         StringBuilder jsonBuilder = new StringBuilder();
@@ -176,9 +175,8 @@ public class CadastrarVaga extends javax.swing.JFrame {
                   "area": "%s",
                   "description": "%s",
                   "state": "%s",
-                  "city": "%s",
-                  "contact": "%s"
-                """, title, area, description, state, city, contact));
+                  "city": "%s"
+                """, title, area, description, state, city));
         
         if (!salary.isEmpty()) {
             jsonBuilder.append(String.format(",\n  \"salary\": \"%s\"", salary));
@@ -189,8 +187,6 @@ public class CadastrarVaga extends javax.swing.JFrame {
             HttpResponse<String> response = clienteHttp.cadastrarVaga(jsonBuilder.toString(), token);
             if (response.statusCode() == 201) {
                 JOptionPane.showMessageDialog(this, "Cadastro realizado com sucesso!");
-                //MenuInicialEmpresa menuE = new MenuInicialEmpresa(clienteHttp, token);
-                //menuE.setVisible(true);
                 this.dispose();
 
             } else {
@@ -244,7 +240,7 @@ public class CadastrarVaga extends javax.swing.JFrame {
     }
     
     private void carregarAreas() {
-        String[] estados = {
+        String[] areas = {
             "Administração", "Agricultura", "Artes", "Atendimento ao Cliente", "Comercial", "Comunicação", 
             "Construção Civil", "Consultoria", "Contabilidade", "Design", "Educação", "Engenharia", "Finanças", "Jurídica",
             "Logística", "Marketing", "Produção", "Recursos Humanos", "Saúde", "Segurança", "Tecnologia da Informação",
@@ -253,8 +249,8 @@ public class CadastrarVaga extends javax.swing.JFrame {
 
         cbArea.removeAllItems();
         cbArea.addItem("Selecione");
-        for (String estado : estados) {
-            cbArea.addItem(estado);
+        for (String area : areas) {
+            cbArea.addItem(area);
         }
     }
     
